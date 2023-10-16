@@ -17,7 +17,7 @@ libre.convertAsync = require('util').promisify(libre.convert);
 */
 
 /**
- * @description Generates a contract file, uploades it to google drive, and update aporte 
+ * Generates a contract file, uploades it to google drive, and update aporte 
  * information with the id of the file on Google Drive
  * @param {Aportes} aporte Registro do aporte à ser gerado contrato.
  * @param {UsersDetails} users_details Registro dos detalhes do usuário.
