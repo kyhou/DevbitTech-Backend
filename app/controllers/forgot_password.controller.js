@@ -8,7 +8,19 @@ const email_helpers = require('../helpers/email_helpers');
 const { v4: uuidv4 } = require('uuid');
 
 exports.send = (req, res) => {
-    var templateTemp = fs.readFileSync(path.join(__dirname, `../templates/emails/forgotPassword.html`), 'utf-8');
+    var templateTemp;
+    var filePath = path.join(__dirname, "../templates/emails/forgotPassword.html");
+
+    if (fs.existsSync(filePath)) {
+        templateTemp = fs.readFileSync(filePath, 'utf-8');
+    } else {
+        filePath = path.join(__dirnamem, "../templates/emails/forgotPasswordBackup.html")
+        if (fs.existsSync(filePath)) {
+            templateTemp = fs.readFileSync(filePath, 'utf-8');
+        } else {
+            templateTemp = '<html><title>Esqueci minha senha</title><body><p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-family:lato, \'helvetica neue\', helvetica, arial, sans-serif;line-height:27px;color:#666666;font-size:18px">Redefinir sua senha é fácil. Basta pressionar o botão abaixo e seguir as instruções. Vamos deixar tudo pronto e funcionando em pouco tempo.<br type="_moz"></p><br /><a href="LINK_DA_TROCA_DE_SENHA" class="es-button" target="_blank" style="mso-style-priority:100 !important;text-decoration:none;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;color:#FFFFFF;font-size:20px;display:inline-block;background:#092e3e;border-radius:2px;font-family:helvetica, \'helvetica neue\', arial, verdana, sans-serif;font-weight:normal;font-style:normal;line-height:24px;width:auto;text-align:center;padding:15px 25px 15px 25px;mso-padding-alt:0;mso-border-alt:10px solid #092E3E">Redefinir Senha</a></body></html>'
+        }
+    }
 
     const uuid = uuidv4().toString();
 
