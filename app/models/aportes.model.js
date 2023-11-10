@@ -20,6 +20,9 @@ module.exports = (sequelize, Sequelize) => {
         contractId: {
             type: Sequelize.STRING
         },
+        type: {
+            type: Sequelize.ENUM("security", "expert")
+        }
     });
 
     return Aportes;

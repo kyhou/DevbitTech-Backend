@@ -4,10 +4,10 @@ const Transactions = db.transactions;
 const UsersSettings = db.usersSettings;
 const Users = db.users;
 const op = db.Sequelize.Op;
-const moment = require('moment');
-const email_helpers = require('../helpers/email_helpers');
-const Enumerable = require('linq');
-const number_helpers = require('../helpers/number_helpers');
+const moment = require("moment");
+const email_helpers = require("../helpers/email_helpers");
+const Enumerable = require("linq");
+const number_helpers = require("../helpers/number_helpers");
 
 exports.getAportes = (req, res) => {
     const DateHelpers = require("../helpers/date_helpers");
@@ -19,113 +19,157 @@ exports.getAportes = (req, res) => {
             active: true,
         },
         order: [
-            ['id', 'ASC'],
-            [Transactions, 'date', 'ASC']
+            ["id", "ASC"],
+            [Transactions, "date", "ASC"],
         ],
-        include: [{
-            model: Transactions,
-            required: false
-        }],
-    }).then(aportes => {
-        if (aportes) {
-            var results = [];
+        include: [
+            {
+                model: Transactions,
+                required: false,
+            },
+        ],
+    })
+        .then((aportes) => {
+            if (aportes) {
+                var results = [];
 
-            aportes.forEach(aporte => {
-                var result = {
-                    id: aporte.id,
-                    value: aporte.value,
-                    transactions: aporte.transactions,
-                    date: aporte.date,
-                    contractId: aporte.contractId,
-                    locked: aporte.locked,
-                };
+                aportes.forEach((aporte) => {
+                    var result = {
+                        id: aporte.id,
+                        value: aporte.value,
+                        transactions: aporte.transactions,
+                        date: aporte.date,
+                        contractId: aporte.contractId,
+                        locked: aporte.locked,
+                        type: aporte.type,
+                        monthProfits: [],
+                    };
 
-                var availableProfit = null;
+                    var monthStart = moment().month() - 6;
+                    var monthProfits = [];
+                    var availableProfit = null;
+                    var lastTransactionMonth = null;
 
-                aporte.transactions.forEach(transaction => {
-                    if (transaction.type == 'saque' || transaction.type == 'novoAporte') {
-                        availableProfit -= Number(transaction.value);
-                    } else if (transaction.type == 'rendimento') {
-                        availableProfit += Number(transaction.value);
-                    }
+                    aporte.transactions.forEach((transaction) => {
+                        var transactionMonth = moment(
+                            transaction.date,
+                            "YYYY-MM-DD",
+                            true
+                        ).month();
+
+                        if (transactionMonth != lastTransactionMonth) {
+                            lastTransactionMonth = transactionMonth;
+
+                            while (transactionMonth > monthStart) {
+                                monthStart++;
+                            }
+
+                            if (
+                                transactionMonth == monthStart++ &&
+                                transactionMonth < moment().month()
+                            ) {
+                                monthProfits.push({
+                                    month: moment()
+                                        .locale("pt-br")
+                                        .localeData()
+                                        .months(moment().month(monthStart - 1)),
+                                    profit: availableProfit + +aporte.value,
+                                });
+                            }
+                        }
+
+                        if (
+                            transaction.type == "saque" ||
+                            transaction.type == "novoAporte"
+                        ) {
+                            availableProfit -= Number(transaction.value);
+                        } else if (transaction.type == "rendimento") {
+                            availableProfit += Number(transaction.value);
+                        }
+                    });
+
+                    result.monthProfits = monthProfits;
+                    result.availableProfit = availableProfit;
+                    results.push(result);
                 });
 
-                result.availableProfit = availableProfit;
-                results.push(result);
+                res.send(results);
+            } else {
+                req.log.error(
+                    `Não foi possivel encontrar os aportes do usuário ${userId}`
+                );
+                res.status(404).send({
+                    message: `Não foi possivel encontrar os aportes do usuário ${userId}.`,
+                });
+            }
+        })
+        .catch((err) => {
+            req.log.error(err);
+            res.status(500).send({
+                message: `Error retrieving Aportes with id=${userId}`,
             });
-
-            res.send(results);
-        } else {
-            req.log.error(`Não foi possivel encontrar os aportes do usuário ${userId}`);
-            res.status(404).send({
-                message: `Não foi possivel encontrar os aportes do usuário ${userId}.`
-            });
-        }
-    }).catch(err => {
-        req.log.error(err);
-        res.status(500).send({
-            message: `Error retrieving Aportes with id=${userId}`
         });
-    });
-}
+};
 
 exports.getAutoReinvest = (req, res) => {
     const userId = req.params.userId;
 
     UsersSettings.findOne({
         where: {
-            userId: userId
-        }
-    }).then(result => {
-        res.send(result.autoReinvest);
-    }).catch(err => {
-        req.log.error(err);
-        res.status(500).send({
-            message: `Error retrieving UsersSettings with id=${userId}`
-        });
+            userId: userId,
+        },
     })
-}
+        .then((result) => {
+            res.send(result.autoReinvest);
+        })
+        .catch((err) => {
+            req.log.error(err);
+            res.status(500).send({
+                message: `Error retrieving UsersSettings with id=${userId}`,
+            });
+        });
+};
 
 exports.updateAutoReinvest = (req, res) => {
     const userId = req.params.userId;
 
-    UsersSettings.update(req.body,
-        {
-            where: {
-                userId: userId
+    UsersSettings.update(req.body, {
+        where: {
+            userId: userId,
+        },
+    })
+        .then((num) => {
+            if (num == 1) {
+                res.send({
+                    message: "UsersSettings was updated successfully.",
+                });
+            } else {
+                res.send({
+                    message: `Cannot update UsersSettings with id=${userId}. Maybe UsersSettings was not found or req.body is empty!`,
+                });
             }
-        }
-    ).then(num => {
-        if (num == 1) {
-            res.send({
-                message: "UsersSettings was updated successfully."
+        })
+        .catch((err) => {
+            req.log.error(err);
+            res.status(500).send({
+                message: "Error updating UsersSettings with userId=" + userId,
             });
-        } else {
-            res.send({
-                message: `Cannot update UsersSettings with id=${userId}. Maybe UsersSettings was not found or req.body is empty!`
-            });
-        }
-    }).catch(err => {
-        req.log.error(err);
-        res.status(500).send({
-            message: "Error updating UsersSettings with userId=" + userId
         });
-    });
-}
+};
 
 exports.newTransaction = async (req, res) => {
     const userId = req.params.userId;
 
     if (new Date().getDate() > 5) {
         res.status(400).send({
-            message: "Periodo inválido."
+            message: "Periodo inválido.",
         });
         return;
     }
 
     if (req.body.value.value == 0) {
         res.status(400).send({
-            message: "Valor 0(zero)."
+            message: "Valor 0(zero).",
         });
         return;
     }
@@ -134,36 +178,35 @@ exports.newTransaction = async (req, res) => {
         where: {
             date: {
                 [op.between]: [
-                    moment().startOf('month').toDate(),
-                    moment().endOf('month').toDate()
-                ]
+                    moment().startOf("month").toDate(),
+                    moment().endOf("month").toDate(),
+                ],
             },
             userId: userId,
-            type: "saque"
-        }
+            type: "saque",
+        },
     });
 
     if (withdraws !== null) {
         res.status(400).send({
-            message: "Saque já realizado esse mês."
+            message: "Saque já realizado esse mês.",
         });
         return;
     }
 
     Aportes.findAll({
-        where:
-        {
+        where: {
             userId: userId,
-            active: true
-        }
+            active: true,
+        },
     }).then((aportes) => {
         var totalValueAportes = aportes.reduce((n, { value }) => {
-            return n += Number(value);
+            return (n += Number(value));
         }, 0);
 
         var newTransactions = [];
 
-        aportes.forEach(aporte => {
+        aportes.forEach((aporte) => {
             var pct = aporte.value / totalValueAportes;
             var value = number_helpers.toFixed(req.body.value.value * pct, 2);
 
@@ -173,54 +216,131 @@ exports.newTransaction = async (req, res) => {
                 value: value,
                 type: "saque",
                 executed: false,
-                aporteId: aporte.id
+                aporteId: aporte.id,
             });
         });
 
-        newTransactions[newTransactions.length - 1].value += (req.body.value.value - Enumerable.from(newTransactions).sum(x => x.value));
+        newTransactions[newTransactions.length - 1].value +=
+            req.body.value.value -
+            Enumerable.from(newTransactions).sum((x) => x.value);
 
-        Transactions.bulkCreate(newTransactions, { validate: true }).then(() => {
-            Users.findOne({
-                where: {
-                    id: userId
-                },
-                include: [{
-                    model: db.usersDetails,
-                    required: true
-                }]
-            }).then((user) => {
-                db.transactions.findOne({
+        Transactions.bulkCreate(newTransactions, { validate: true })
+            .then(() => {
+                Users.findOne({
                     where: {
-                        userId: user.id,
-                        type: "saque",
-                        executed: false
-                    }
-                }).then((transaction) => {
-                    let date = moment(transaction.createdAt);
+                        id: userId,
+                    },
+                    include: [
+                        {
+                            model: db.usersDetails,
+                            required: true,
+                        },
+                    ],
+                }).then((user) => {
+                    db.transactions
+                        .findOne({
+                            where: {
+                                userId: user.id,
+                                type: "saque",
+                                executed: false,
+                            },
+                        })
+                        .then((transaction) => {
+                            let date = moment(transaction.createdAt);
 
-                    email_helpers.send(
-                        `no-reply@${process.env.EMAIL_DOMAIN}`,
-                        `consultoria@${process.env.EMAIL_DOMAIN}`,
-                        `Solicitação de saque - ${user.users_detail.firstName} ${user.users_detail.lastName} - ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(req.body.value.value)}`,
-                        `<div>Olá gestor,<div><br></div><div>O cliente ${user.users_detail.firstName} ${user.users_detail.lastName} solicitou ${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(req.body.value.value)} em ${date.format("DD/MM/YYYY [às] kk:mm[h]")}.</div><div><br></div><div>Mensagem do sistema.</div></div>`
-                    ).then((result) => {
-                        if (!result) {
-                            res.log.error("Withdraw email not send");
-                        }
-                    }).catch((err) => {
-                        res.log.error("Error sending withdraw email: " + err);
-                    });
+                            email_helpers
+                                .send(
+                                    `no-reply@${process.env.EMAIL_DOMAIN}`,
+                                    `consultoria@${process.env.EMAIL_DOMAIN}`,
+                                    `Solicitação de saque - ${
+                                        user.users_detail.firstName
+                                    } ${
+                                        user.users_detail.lastName
+                                    } - ${new Intl.NumberFormat("pt-BR", {
+                                        style: "currency",
+                                        currency: "BRL",
+                                    }).format(req.body.value.value)}`,
+                                    `<div>Olá gestor,<div><br></div><div>O cliente ${
+                                        user.users_detail.firstName
+                                    } ${
+                                        user.users_detail.lastName
+                                    } solicitou ${new Intl.NumberFormat(
+                                        "pt-BR",
+                                        {
+                                            style: "currency",
+                                            currency: "BRL",
+                                        }
+                                    ).format(
+                                        req.body.value.value
+                                    )} em ${date.format(
+                                        "DD/MM/YYYY [às] kk:mm[h]"
+                                    )}.</div><div><br></div><div>Mensagem do sistema.</div></div>`
+                                )
+                                .then((result) => {
+                                    if (!result) {
+                                        res.log.error(
+                                            "Withdraw email not send"
+                                        );
+                                    }
+                                })
+                                .catch((err) => {
+                                    res.log.error(
+                                        "Error sending withdraw email: " + err
+                                    );
+                                });
+                        });
+                });
+
+                res.send({
+                    message: "Saque criado com sucesso.",
+                });
+            })
+            .catch((err) => {
+                req.log.error(err);
+                res.status(500).send({
+                    message: `Erro criando o Saque: ${err}`,
                 });
             });
-
-            res.send({
-                message: "Saque criado com sucesso."
-            });
-        }).catch(err => {
-            req.log.error(err);
-            res.status(500).send({
-                message: `Erro criando o Saque: ${err}`
-            });
-        });
     });
-}
+};
+
+exports.getBalanceOfType = async (req, res) => {
+    const userId = req.params.userId;
+    const aporteType = req.params.aporteType;
+
+    var aporte = await Aportes.findOne({
+        where: {
+            userId: userId,
+            active: true,
+            type: aporteType,
+        },
+        order: [
+            ["id", "ASC"],
+            [Transactions, "date", "ASC"],
+        ],
+        include: [
+            {
+                model: Transactions,
+                required: false,
+            },
+        ],
+    });
+
+    if (aporte) {
+        var balance = 0;
+        aporte.transactions.forEach((transaction) => {
+            if (
+                transaction.type == "saque" ||
+                transaction.type == "novoAporte"
+            ) {
+                balance -= Number(transaction.value);
+            } else if (transaction.type == "rendimento") {
+                balance += Number(transaction.value);
+            }
+        });
+
+        res.send({ balance: balance + +aporte.value });
+    } else {
+        res.send({ balance: 0 });
+    }
+};

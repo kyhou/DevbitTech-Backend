@@ -81,5 +81,6 @@ db.users.hasOne(db.refreshToken, {
 db.ROLES = ["user", "admin", "colab"];
 db.TRANSACTIONS_TYPES = ["saque", "rendimento", "novoAporte"];
 db.USER_TYPES = ["select", "invest"];
+db.APORTES_TYPES = ["security", "expert"];
 
 module.exports = db;

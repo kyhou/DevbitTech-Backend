@@ -13,6 +13,11 @@ module.exports = app => {
         [authJwt.verifyToken],
         userDashboard.getAutoReinvest);
 
+    router.get(
+        "/getBalanceOfType/:userId/:aporteType",
+        [authJwt.verifyToken],
+        userDashboard.getBalanceOfType);
+
     router.put(
         "/updateAutoReinvest/:userId",
         [authJwt.verifyToken],
