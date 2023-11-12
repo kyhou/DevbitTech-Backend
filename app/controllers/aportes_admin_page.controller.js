@@ -124,7 +124,8 @@ exports.newAporte = (req, res) => {
         value: req.body.aporte.value,
         active: req.body.aporte.active ?? true,
         locked: req.body.aporte.locked ?? false,
-        userId: req.body.aporte.user
+        userId: req.body.aporte.user,
+        type: req.body.aporte.type
     }).then(() => {
         res.status(200).send({
             message: "Aporte cadastrado com sucesso!"
