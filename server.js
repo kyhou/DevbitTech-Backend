@@ -38,9 +38,12 @@ app.use(pino);
 
 const db = require("./app/models");
 db.sequelize.sync();
+// db.sequelize.sync({ alter: true  }).then(() => {
+//   console.log("Alter tables.");
+// });
 
 //TODO: only in development
-// db.sequelize.sync({ force: 1 }).then(() => {
+// db.sequelize.sync({ force: true }).then(() => {
 //   console.log("Drop and re-sync db.");
 // });
 
