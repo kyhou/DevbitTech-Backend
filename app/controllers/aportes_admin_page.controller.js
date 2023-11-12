@@ -122,8 +122,8 @@ exports.newAporte = (req, res) => {
     Aportes.create({
         date: new Date(req.body.aporte.date),
         value: req.body.aporte.value,
-        active: req.body.aporte.active,
-        locked: req.body.aporte.locked,
+        active: req.body.aporte.active ?? true,
+        locked: req.body.aporte.locked ?? false,
         userId: req.body.aporte.user
     }).then(() => {
         res.status(200).send({
