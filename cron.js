@@ -16,6 +16,6 @@ module.exports = () => {
         cron.processNewAportes();
     });
 
-    job1.start();
-    job2.start();
+    // job1.start();
+    // job2.start();
 }

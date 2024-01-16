@@ -21,7 +21,7 @@ const pino = pinoHttp({
 );
 
 require("./app/helpers/date.prototype")();
-require('./cron')();
+// require('./cron')();
 require('./app_configs')();
 
 const app = express();
@@ -60,3 +60,5 @@ const PORT = process.env.PORT || 8088;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}.`);
 });
+
+// module.exports = app;
