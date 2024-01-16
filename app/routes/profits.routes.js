@@ -8,6 +8,11 @@ module.exports = app => {
         profits.findAll
     );
 
+    router.get("/:userId",
+        [authJwt.verifyToken],
+        profits.findAllUserProfits
+    );
+
     router.use(function (req, res, next) {
         res.header(
             "Access-Control-Allow-Headers",

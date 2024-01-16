@@ -10,7 +10,7 @@ const Enumerable = require("linq");
 const number_helpers = require("../helpers/number_helpers");
 
 exports.getAportes = (req, res) => {
-    const DateHelpers = require("../helpers/date_helpers");
+    // const DateHelpers = require("../helpers/date_helpers");
     const userId = req.params.userId;
 
     Aportes.findAll({
@@ -45,7 +45,7 @@ exports.getAportes = (req, res) => {
                         monthProfits: [],
                     };
 
-                    var monthStart = moment().month() - 6;
+                    var monthStart = moment().subtract(6, "M").endOf("month");
                     var monthProfits = [];
                     var availableProfit = null;
                     var lastTransactionMonth = null;
@@ -55,27 +55,27 @@ exports.getAportes = (req, res) => {
                             transaction.date,
                             "YYYY-MM-DD",
                             true
-                        ).month();
+                        ).endOf("month");
 
                         if (transactionMonth != lastTransactionMonth) {
                             lastTransactionMonth = transactionMonth;
 
                             while (transactionMonth > monthStart) {
-                                monthStart++;
+                                monthStart.add(1, "M");
                             }
 
                             if (
-                                transactionMonth == monthStart++ &&
-                                transactionMonth < moment().month()
+                                transactionMonth.month() ==
+                                monthStart.month() &&
+                                transactionMonth.startOf("month") < moment().startOf("month")
                             ) {
                                 monthProfits.push({
-                                    month: moment()
-                                        .locale("pt-br")
-                                        .localeData()
-                                        .months(moment().month(monthStart - 1)),
+                                    month: monthStart.clone(),
                                     profit: availableProfit + +aporte.value,
                                 });
                             }
+
+                            monthStart.add(1, "M");
                         }
 
                         if (
@@ -88,18 +88,39 @@ exports.getAportes = (req, res) => {
                         }
                     });
 
-                    result.monthProfits = monthProfits;
+                    while (monthProfits.length > 0 && 
+                           monthProfits.length < 6 
+                    ) {
+                        var temp = { ...monthProfits[monthProfits.length - 1] };
+                        temp.month = temp.month.clone().add(1, "M");
+                        monthProfits.push(temp);
+
+                        if (temp.month.startOf("month").isSame(moment().subtract(1, "M").startOf("month"))) {
+                            break;
+                        }
+                    }
+
+                    result.monthProfits = monthProfits.map((monthProfit) => {
+                        return {
+                            month: moment()
+                                .locale("pt-br")
+                                .localeData()
+                                .months(
+                                    monthProfit.month
+                                ),
+                            profit: monthProfit.profit,
+                        };
+                    });
                     result.availableProfit = availableProfit;
                     results.push(result);
                 });
 
                 res.send(results);
             } else {
-                req.log.error(
-                    `Não foi possivel encontrar os aportes do usuário ${userId}`
-                );
+                const message = `Não foi possivel encontrar os aportes do usuário ${userId}.`;
+                req.log.error(message);
                 res.status(404).send({
-                    message: `Não foi possivel encontrar os aportes do usuário ${userId}.`,
+                    message,
                 });
             }
         })
@@ -246,48 +267,47 @@ exports.newTransaction = async (req, res) => {
                             },
                         })
                         .then((transaction) => {
-                            let date = moment(transaction.createdAt);
+                            if (process.env.EMAIL_DOMAIN !== undefined) {
+                                let date = moment(transaction.createdAt);
 
-                            email_helpers
-                                .send(
-                                    `no-reply@${process.env.EMAIL_DOMAIN}`,
-                                    `consultoria@${process.env.EMAIL_DOMAIN}`,
-                                    `Solicitação de saque - ${
-                                        user.users_detail.firstName
-                                    } ${
-                                        user.users_detail.lastName
-                                    } - ${new Intl.NumberFormat("pt-BR", {
-                                        style: "currency",
-                                        currency: "BRL",
-                                    }).format(req.body.value.value)}`,
-                                    `<div>Olá gestor,<div><br></div><div>O cliente ${
-                                        user.users_detail.firstName
-                                    } ${
-                                        user.users_detail.lastName
-                                    } solicitou ${new Intl.NumberFormat(
-                                        "pt-BR",
-                                        {
+                                email_helpers
+                                    .send(
+                                        `no-reply@${process.env.EMAIL_DOMAIN}`,
+                                        `consultoria@${process.env.EMAIL_DOMAIN}`,
+                                        `Solicitação de saque - ${user.users_detail.firstName
+                                        } ${user.users_detail.lastName
+                                        } - ${new Intl.NumberFormat("pt-BR", {
                                             style: "currency",
                                             currency: "BRL",
+                                        }).format(req.body.value.value)}`,
+                                        `<div>Olá gestor,<div><br></div><div>O cliente ${user.users_detail.firstName
+                                        } ${user.users_detail.lastName
+                                        } solicitou ${new Intl.NumberFormat(
+                                            "pt-BR",
+                                            {
+                                                style: "currency",
+                                                currency: "BRL",
+                                            }
+                                        ).format(
+                                            req.body.value.value
+                                        )} em ${date.format(
+                                            "DD/MM/YYYY [às] kk:mm[h]"
+                                        )}.</div><div><br></div><div>Mensagem do sistema.</div></div>`
+                                    )
+                                    .then((result) => {
+                                        if (!result) {
+                                            res.log.error(
+                                                "Withdraw email not send"
+                                            );
                                         }
-                                    ).format(
-                                        req.body.value.value
-                                    )} em ${date.format(
-                                        "DD/MM/YYYY [às] kk:mm[h]"
-                                    )}.</div><div><br></div><div>Mensagem do sistema.</div></div>`
-                                )
-                                .then((result) => {
-                                    if (!result) {
+                                    })
+                                    .catch((err) => {
                                         res.log.error(
-                                            "Withdraw email not send"
+                                            "Error sending withdraw email: " +
+                                            err
                                         );
-                                    }
-                                })
-                                .catch((err) => {
-                                    res.log.error(
-                                        "Error sending withdraw email: " + err
-                                    );
-                                });
+                                    });
+                            }
                         });
                 });
 
