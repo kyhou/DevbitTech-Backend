@@ -45,39 +45,10 @@ exports.getAportes = (req, res) => {
                         monthProfits: [],
                     };
 
-                    var monthStart = moment().subtract(6, "M").endOf("month");
                     var monthProfits = [];
                     var availableProfit = null;
-                    var lastTransactionMonth = null;
 
-                    aporte.transactions.forEach((transaction) => {
-                        var transactionMonth = moment(
-                            transaction.date,
-                            "YYYY-MM-DD",
-                            true
-                        ).endOf("month");
-
-                        if (transactionMonth != lastTransactionMonth) {
-                            lastTransactionMonth = transactionMonth;
-
-                            while (transactionMonth > monthStart) {
-                                monthStart.add(1, "M");
-                            }
-
-                            if (
-                                transactionMonth.month() ==
-                                monthStart.month() &&
-                                transactionMonth.startOf("month") < moment().startOf("month")
-                            ) {
-                                monthProfits.push({
-                                    month: monthStart.clone(),
-                                    profit: availableProfit + +aporte.value,
-                                });
-                            }
-
-                            monthStart.add(1, "M");
-                        }
-
+                    aporte.transactions.forEach((transaction) => {                        
                         if (
                             transaction.type == "saque" ||
                             transaction.type == "novoAporte"
@@ -86,11 +57,28 @@ exports.getAportes = (req, res) => {
                         } else if (transaction.type == "rendimento") {
                             availableProfit += Number(transaction.value);
                         }
+
+                        var transactionMonth = moment(
+                            transaction.date,
+                            "YYYY-MM-DD",
+                            true
+                        ).startOf("month");
+
+                        var existingMonth = monthProfits.find((x) => x.month.startOf("month").isSame(transactionMonth));
+
+                        if (existingMonth) {
+                            existingMonth.profit += +transaction.value;
+                        } else {
+                            if (transactionMonth.startOf("month") < moment().startOf("month")) {
+                                monthProfits.push({
+                                    month: transactionMonth.clone(),
+                                    profit: availableProfit + +aporte.value,
+                                });
+                            }
+                        }
                     });
 
-                    while (monthProfits.length > 0 && 
-                           monthProfits.length < 6 
-                    ) {
+                    while (monthProfits[monthProfits.length - 1].month.startOf("month") < moment().subtract(1, "M").startOf("month")) {
                         var temp = { ...monthProfits[monthProfits.length - 1] };
                         temp.month = temp.month.clone().add(1, "M");
                         monthProfits.push(temp);
