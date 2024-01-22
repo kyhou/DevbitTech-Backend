@@ -72,11 +72,24 @@ exports.getAportes = (req, res) => {
                             if (transactionMonth.startOf("month") < moment().startOf("month")) {
                                 monthProfits.push({
                                     month: transactionMonth.clone(),
-                                    profit: availableProfit + +aporte.value,
+                                    profit: +availableProfit + +aporte.value,
                                 });
                             }
                         }
                     });
+
+                    if (monthProfits.length == 0) {
+                        var aporteMonth = moment(
+                            aporte.date,
+                            "YYYY-MM-DD",
+                            true
+                        ).startOf("month");
+
+                        monthProfits.push({
+                            month: aporteMonth.clone(),
+                            profit: +availableProfit + +aporte.value,
+                        });
+                    }
 
                     while (monthProfits[monthProfits.length - 1].month.startOf("month") < moment().subtract(1, "M").startOf("month")) {
                         var temp = { ...monthProfits[monthProfits.length - 1] };
@@ -99,7 +112,7 @@ exports.getAportes = (req, res) => {
                             profit: monthProfit.profit,
                         };
                     });
-                    result.availableProfit = availableProfit;
+                    result.availableProfit = +availableProfit;
                     results.push(result);
                 });
 

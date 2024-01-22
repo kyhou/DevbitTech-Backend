@@ -55,6 +55,7 @@ exports.returnAportesData = (req, res) => {
                             id: process.env.APORTE_PREFIX + aporte.id.padStart(5, "0"),
                             date: date_helpers.parseDate(aporte.date).format("DD/MM/YYYY"),
                             value: formatter.format(aporte.value),
+                            type: aporte.type,
                             locked: aporte.locked,
                             userId: aporte.user.id,
                             user: aporte.user.users_detail.firstName + " " + aporte.user.users_detail.lastName,
@@ -101,14 +102,16 @@ exports.updateAporte = (req, res) => {
         aporte.value = req.body.aporte.value;
         aporte.locked = req.body.aporte.locked;
         aporte.active = req.body.aporte.active;
+        aporte.type = req.body.aporte.type;
 
         aporte.save().then(() => {
             res.send({ message: "Aporte alterado com sucesso." });
         }).catch(err => {
+            req.log.error(err);
             res.status(500).send({ message: "Erro ao alterar o aporte." });
         });
     }).catch(err => {
-        console.error(err);
+        req.log.error(err);
         res.status(500).send({ message: "Aporte não encontrado." });
     });
 };
