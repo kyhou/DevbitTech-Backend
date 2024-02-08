@@ -30,19 +30,13 @@ module.exports = app => {
 
     router.get(
         "/getUserProfits/:userId",
-        [
-            authJwt.verifyToken,
-            authJwt.isAdmin
-        ],
+        [authJwt.verifyToken],
         userDashboard.getUserProfits
     );
 
     router.get(
         "/getAportesInitialSum/:userId",
-        [
-            authJwt.verifyToken,
-            authJwt.isAdmin
-        ],
+        [authJwt.verifyToken],
         userDashboard.getAportesInitialSum
     );
 
