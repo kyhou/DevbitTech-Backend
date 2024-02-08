@@ -365,3 +365,39 @@ exports.getBalanceOfType = async (req, res) => {
         res.send({ balance: 0 });
     }
 };
+
+exports.getUserProfits = async (req, res) => {
+    const aporteIds = await Aportes.findAll({
+        where: [
+            {
+                userId: req.params.userId,
+                active: true
+            },
+        ],
+        attributes: [
+            'id'
+        ]
+    });
+
+    var profits = (await Transactions.sum('value', {
+        where: {
+            aporteId: aporteIds.map(aporte => aporte.id),
+            type: 'rendimento',
+        }
+    })) ?? 0;
+
+    res.status(200).send({ profits });
+};
+
+exports.getAportesInitialSum = async (req, res) => {
+    var aportesSum = (await Aportes.sum('value', {
+        where: [
+            {
+                userId: req.params.userId,
+                active: true
+            },
+        ]
+    })) ?? 0;
+
+    res.status(200).send({ aportesSum });
+};

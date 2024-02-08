@@ -28,6 +28,24 @@ module.exports = app => {
         [authJwt.verifyToken],
         userDashboard.newTransaction);
 
+    router.get(
+        "/getUserProfits/:userId",
+        [
+            authJwt.verifyToken,
+            authJwt.isAdmin
+        ],
+        userDashboard.getUserProfits
+    );
+
+    router.get(
+        "/getAportesInitialSum/:userId",
+        [
+            authJwt.verifyToken,
+            authJwt.isAdmin
+        ],
+        userDashboard.getAportesInitialSum
+    );
+
     router.use(function (req, res, next) {
         res.header(
             "Access-Control-Allow-Headers",
