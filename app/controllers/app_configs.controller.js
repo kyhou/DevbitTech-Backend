@@ -26,7 +26,7 @@ const logger = pino(fileTransport);
  * @returns {Promise<Configs[]>}
  */
 exports.getAll = async () => {
-    var configs = await AppConfigs.findAll();
+    let configs = await AppConfigs.findAll();
 
     if (configs) {
         logger.info("Configurations found");
@@ -43,7 +43,7 @@ exports.getAll = async () => {
  * @returns {Promise<string>} The value associeted with the configuration key.
  */
 exports.getOne = async (key) => {
-    var config = await Aportes.findByPk(key);
+    let config = await Aportes.findByPk(key);
 
     if (config) {
         logger.info("Configuration key found");

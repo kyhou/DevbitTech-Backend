@@ -12,7 +12,15 @@ const catchError = (err, res) => {
   return res.sendStatus(401).send({ message: "Unauthorized!" });
 }
 
-verifyToken = (req, res, next) => {
+/**
+ * Verifies the JWT token in the request headers.
+ *
+ * @param {Object} req - The request object.
+ * @param {Object} res - The response object.
+ * @param {Function} next - The next middleware function.
+ * @return {void} If the token is missing or invalid, sends a 403 response with an error message. Otherwise, sets the user ID from the token in the request object and calls the next middleware function.
+ */
+let verifyToken = (req, res, next) => {
   let token = req.headers["x-access-token"];
 
   if (!token) {
@@ -30,11 +38,11 @@ verifyToken = (req, res, next) => {
   });
 };
 
-isAdmin = (req, res, next) => {
+let isAdmin = (req, res, next) => {
   Users.findByPk(req.userId).then(user => {
     user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].description === "admin") {
+      for (const element of roles) {
+        if (element.description === "admin") {
           next();
           return;
         }
@@ -43,16 +51,15 @@ isAdmin = (req, res, next) => {
       res.status(403).send({
         message: "Require Admin Role!"
       });
-      return;
     });
   });
 };
 
-isColaborator = (req, res, next) => {
+let isColaborator = (req, res, next) => {
   Users.findByPk(req.userId).then(user => {
     user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].description === "colab") {
+      for (const element of roles) {
+        if (element.description === "colab") {
           next();
           return;
         }
@@ -65,16 +72,11 @@ isColaborator = (req, res, next) => {
   });
 };
 
-isColaboratorOrAdmin = (req, res, next) => {
+let isColaboratorOrAdmin = (req, res, next) => {
   Users.findByPk(req.userId).then(user => {
     user.getRoles().then(roles => {
-      for (let i = 0; i < roles.length; i++) {
-        if (roles[i].description === "colab") {
-          next();
-          return;
-        }
-
-        if (roles[i].description === "admin") {
+      for (const element of roles) {
+        if (element.description === "colab" || element.description === "admin") {
           next();
           return;
         }

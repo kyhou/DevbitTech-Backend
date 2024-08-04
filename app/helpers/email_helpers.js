@@ -1,4 +1,4 @@
-var nodemailer = require('nodemailer');
+let nodemailer = require('nodemailer');
 const pino = require('pino');
 const fileTransport = pino.transport({
     target: 'pino/file',

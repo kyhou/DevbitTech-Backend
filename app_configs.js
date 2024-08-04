@@ -1,5 +1,3 @@
-
-
 /**
 * Set enviroment variables from the table app_configs on the database
 */
@@ -22,14 +20,14 @@ module.exports = async () => {
     const app_configs = require("./app/controllers/app_configs.controller");
 
     try {
-        var configs = await app_configs.getAll();
+        let configs = await app_configs.getAll();
         if (configs) {
             for (let config of configs) {
                 process.env[config.key] = config.value;
             }
             logger.info("Environment variables are all set :)");
         } else {
-            throw "Error reading app configs";
+            throw new Error("Error reading app configs");
         }
     } catch (err) {
         throw err;

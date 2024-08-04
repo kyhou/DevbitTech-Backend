@@ -47,7 +47,7 @@ db.sequelize.sync();
 //   console.log("Drop and re-sync db.");
 // });
 
-var glob = require('glob'),
+let glob = require('glob'),
     path = require('path');
 
 glob.sync('./app/routes/**/*.js').forEach(function (file) {
