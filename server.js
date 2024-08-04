@@ -26,7 +26,17 @@ require('./app_configs')();
 
 const app = express();
 
-app.use(cors());
+if (process.env.FRONTEND_URL) {
+
+let corsOptions = {
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+}
+
+app.use(cors(corsOptions));
+} else {
+  app.use(cors());
+}
 
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
