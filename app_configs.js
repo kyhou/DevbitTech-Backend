@@ -4,18 +4,11 @@
 module.exports = async () => {
     const pino = require('pino');
 
-    const fileTransport = pino.transport({
-        target: 'pino/file',
-        options: {
-            destination: `${__dirname}/logs/app_configs.log`,
-            mkdir: true,
-        },
-    });
     /**
      * @typedef {import('pino').Logger} Logger
      * @type {Logger}
      */
-    const logger = pino(fileTransport);
+    const logger = pino();
 
     const app_configs = require("./app/controllers/app_configs.controller");
 

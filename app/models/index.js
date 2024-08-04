@@ -5,7 +5,7 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
   dialect: dbConfig.dialect,
   operatorsAliases: 0,
-  logging: console.log,
+  //logging: console.log,
   dialectModule: require('pg'),
 
   pool: {
@@ -58,9 +58,6 @@ db.transactions.belongsTo(db.aportes);
 
 db.users.hasMany(db.transactions);
 db.transactions.belongsTo(db.users);
-
-// db.users.belongsToMany(db.roles, { through: 'usersroles' });
-// db.roles.belongsToMany(db.users, { through: 'usersroles' });
 
 db.users.hasOne(db.newPassword);
 db.newPassword.belongsTo(db.users);

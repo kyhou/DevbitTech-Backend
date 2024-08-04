@@ -1,13 +1,6 @@
 let nodemailer = require('nodemailer');
 const pino = require('pino');
-const fileTransport = pino.transport({
-    target: 'pino/file',
-    options: {
-        destination: `${__dirname}/../../logs/email.log`,
-        mkdir: true,
-    },
-});
-const logger = pino(fileTransport);
+const logger = pino();
 
 const send = async (from, to, subject, html, text) => {
     try {

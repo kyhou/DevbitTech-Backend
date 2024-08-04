@@ -3,22 +3,11 @@ require('dotenv/config');
 const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const pinoLog = require('pino');
 const pinoHttp = require('pino-http');
-
-const fileTransport = pinoLog.transport({
-  target: 'pino/file',
-  options: {
-    destination: `${__dirname}/logs/app.log`,
-    mkdir: true,
-  },
-});
 
 const pino = pinoHttp({
   redact: ['req.headers["x-access-token"]'],
-  },
-  fileTransport
-);
+});
 
 require("./app/helpers/date.prototype")();
 // require('./cron')();
@@ -28,12 +17,12 @@ const app = express();
 
 if (process.env.FRONTEND_URL) {
 
-let corsOptions = {
+  let corsOptions = {
     origin: process.env.FRONTEND_URL,
     credentials: true,
-}
+  }
 
-app.use(cors(corsOptions));
+  app.use(cors(corsOptions));
 } else {
   app.use(cors());
 }
@@ -58,7 +47,7 @@ db.sequelize.sync();
 // });
 
 let glob = require('glob'),
-    path = require('path');
+  path = require('path');
 
 glob.sync('./app/routes/**/*.js').forEach(function (file) {
   require(path.resolve(file))(app);
