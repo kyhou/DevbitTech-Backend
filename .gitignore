@@ -132,3 +132,4 @@ dist
 /app/config/*.key*
 /app/config/credentials.json
 /app/config/service.json
+.vercel
