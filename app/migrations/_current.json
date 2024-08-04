@@ -1,0 +1,511 @@
+{
+    "tables": {
+        "app_configs": {
+            "tableName": "app_configs",
+            "schema": {
+                "key": {
+                    "primaryKey": true,
+                    "field": "key",
+                    "seqType": "Sequelize.STRING"
+                },
+                "value": {
+                    "field": "value",
+                    "seqType": "Sequelize.STRING"
+                }
+            },
+            "indexes": []
+        },
+        "users": {
+            "tableName": "users",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.BIGINT"
+                },
+                "email": {
+                    "field": "email",
+                    "seqType": "Sequelize.STRING"
+                },
+                "password": {
+                    "field": "password",
+                    "seqType": "Sequelize.STRING"
+                },
+                "active": {
+                    "field": "active",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
+                "message": {
+                    "field": "message",
+                    "seqType": "Sequelize.TEXT"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "roles": {
+            "tableName": "roles",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "description": {
+                    "field": "description",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "users_details": {
+            "tableName": "users_details",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.BIGINT"
+                },
+                "firstName": {
+                    "field": "firstName",
+                    "seqType": "Sequelize.STRING"
+                },
+                "lastName": {
+                    "field": "lastName",
+                    "seqType": "Sequelize.STRING"
+                },
+                "document": {
+                    "field": "document",
+                    "seqType": "Sequelize.STRING"
+                },
+                "documentType": {
+                    "field": "documentType",
+                    "seqType": "Sequelize.ENUM('CPF', 'CNPJ')"
+                },
+                "phone": {
+                    "field": "phone",
+                    "seqType": "Sequelize.STRING"
+                },
+                "maritalStatus": {
+                    "field": "maritalStatus",
+                    "seqType": "Sequelize.ENUM('Casado(a)', 'Solteiro(a)', 'Viúvo(a)', 'Divorciado(a)', 'Separado(a)')"
+                },
+                "profession": {
+                    "field": "profession",
+                    "seqType": "Sequelize.STRING"
+                },
+                "address": {
+                    "field": "address",
+                    "seqType": "Sequelize.STRING"
+                },
+                "number": {
+                    "field": "number",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "complement": {
+                    "field": "complement",
+                    "seqType": "Sequelize.STRING"
+                },
+                "district": {
+                    "field": "district",
+                    "seqType": "Sequelize.STRING"
+                },
+                "zipCode": {
+                    "field": "zipCode",
+                    "seqType": "Sequelize.STRING"
+                },
+                "city": {
+                    "field": "city",
+                    "seqType": "Sequelize.STRING"
+                },
+                "uf": {
+                    "field": "uf",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "userId": {
+                    "allowNull": true,
+                    "references": {
+                        "model": "users",
+                        "key": "id"
+                    },
+                    "onDelete": "SET NULL",
+                    "onUpdate": "CASCADE",
+                    "field": "userId",
+                    "seqType": "Sequelize.BIGINT"
+                }
+            },
+            "indexes": []
+        },
+        "users_settings": {
+            "tableName": "users_settings",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.BIGINT"
+                },
+                "autoReinvest": {
+                    "defaultValue": {
+                        "value": true
+                    },
+                    "field": "autoReinvest",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
+                "type": {
+                    "field": "type",
+                    "seqType": "Sequelize.ENUM('select', 'invest')"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "userId": {
+                    "allowNull": true,
+                    "references": {
+                        "model": "users",
+                        "key": "id"
+                    },
+                    "onDelete": "SET NULL",
+                    "onUpdate": "CASCADE",
+                    "field": "userId",
+                    "seqType": "Sequelize.BIGINT"
+                }
+            },
+            "indexes": []
+        },
+        "transactions": {
+            "tableName": "transactions",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.BIGINT"
+                },
+                "date": {
+                    "field": "date",
+                    "seqType": "Sequelize.DATEONLY"
+                },
+                "value": {
+                    "field": "value",
+                    "seqType": "Sequelize.DECIMAL(15, 2)"
+                },
+                "pct_profit": {
+                    "field": "pct_profit",
+                    "seqType": "Sequelize.DECIMAL(4, 2)"
+                },
+                "type": {
+                    "field": "type",
+                    "seqType": "Sequelize.ENUM('saque', 'rendimento', 'novoAporte')"
+                },
+                "executed": {
+                    "defaultValue": {
+                        "value": true
+                    },
+                    "field": "executed",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
+                "newAporteId": {
+                    "references": {
+                        "model": "aportes",
+                        "key": "id"
+                    },
+                    "field": "newAporteId",
+                    "seqType": "Sequelize.BIGINT"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "aporteId": {
+                    "allowNull": true,
+                    "references": {
+                        "model": "aportes",
+                        "key": "id"
+                    },
+                    "onDelete": "SET NULL",
+                    "onUpdate": "CASCADE",
+                    "field": "aporteId",
+                    "seqType": "Sequelize.BIGINT"
+                },
+                "userId": {
+                    "allowNull": true,
+                    "references": {
+                        "model": "users",
+                        "key": "id"
+                    },
+                    "onDelete": "SET NULL",
+                    "onUpdate": "CASCADE",
+                    "field": "userId",
+                    "seqType": "Sequelize.BIGINT"
+                }
+            },
+            "indexes": []
+        },
+        "aportes": {
+            "tableName": "aportes",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.BIGINT"
+                },
+                "date": {
+                    "field": "date",
+                    "seqType": "Sequelize.DATEONLY"
+                },
+                "value": {
+                    "field": "value",
+                    "seqType": "Sequelize.DECIMAL(15, 2)"
+                },
+                "active": {
+                    "field": "active",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
+                "locked": {
+                    "field": "locked",
+                    "seqType": "Sequelize.BOOLEAN"
+                },
+                "contractId": {
+                    "field": "contractId",
+                    "seqType": "Sequelize.STRING"
+                },
+                "type": {
+                    "field": "type",
+                    "seqType": "Sequelize.ENUM('security', 'expert')"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "userId": {
+                    "allowNull": true,
+                    "references": {
+                        "model": "users",
+                        "key": "id"
+                    },
+                    "onDelete": "SET NULL",
+                    "onUpdate": "CASCADE",
+                    "field": "userId",
+                    "seqType": "Sequelize.BIGINT"
+                }
+            },
+            "indexes": []
+        },
+        "new_passwords": {
+            "tableName": "new_passwords",
+            "schema": {
+                "key": {
+                    "primaryKey": true,
+                    "field": "key",
+                    "seqType": "Sequelize.STRING"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "userId": {
+                    "allowNull": true,
+                    "references": {
+                        "model": "users",
+                        "key": "id"
+                    },
+                    "onDelete": "SET NULL",
+                    "onUpdate": "CASCADE",
+                    "field": "userId",
+                    "seqType": "Sequelize.BIGINT"
+                }
+            },
+            "indexes": []
+        },
+        "profits": {
+            "tableName": "profits",
+            "schema": {
+                "id": {
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.BIGINT"
+                },
+                "startDate": {
+                    "allowNull": false,
+                    "field": "startDate",
+                    "seqType": "Sequelize.DATEONLY"
+                },
+                "endDate": {
+                    "field": "endDate",
+                    "seqType": "Sequelize.DATEONLY"
+                },
+                "value": {
+                    "allowNull": false,
+                    "field": "value",
+                    "seqType": "Sequelize.DECIMAL(4, 2)"
+                },
+                "aporteId": {
+                    "references": {
+                        "model": "aportes",
+                        "key": "id"
+                    },
+                    "field": "aporteId",
+                    "allowNull": true,
+                    "onDelete": "CASCADE",
+                    "onUpdate": "CASCADE",
+                    "seqType": "Sequelize.BIGINT"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                }
+            },
+            "indexes": []
+        },
+        "refreshTokens": {
+            "tableName": "refreshTokens",
+            "schema": {
+                "id": {
+                    "allowNull": false,
+                    "primaryKey": true,
+                    "autoIncrement": true,
+                    "field": "id",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "token": {
+                    "field": "token",
+                    "seqType": "Sequelize.STRING"
+                },
+                "expiryDate": {
+                    "field": "expiryDate",
+                    "seqType": "Sequelize.DATE"
+                },
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "userId": {
+                    "allowNull": true,
+                    "references": {
+                        "model": "users",
+                        "key": "id"
+                    },
+                    "onDelete": "SET NULL",
+                    "onUpdate": "CASCADE",
+                    "field": "userId",
+                    "seqType": "Sequelize.BIGINT"
+                }
+            },
+            "indexes": []
+        },
+        "users_roles": {
+            "tableName": "users_roles",
+            "schema": {
+                "createdAt": {
+                    "allowNull": false,
+                    "field": "createdAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "updatedAt": {
+                    "allowNull": false,
+                    "field": "updatedAt",
+                    "seqType": "Sequelize.DATE"
+                },
+                "roleId": {
+                    "primaryKey": true,
+                    "references": {
+                        "model": "roles",
+                        "key": "id"
+                    },
+                    "onDelete": "CASCADE",
+                    "onUpdate": "CASCADE",
+                    "field": "roleId",
+                    "seqType": "Sequelize.INTEGER"
+                },
+                "userId": {
+                    "primaryKey": true,
+                    "references": {
+                        "model": "users",
+                        "key": "id"
+                    },
+                    "onDelete": "CASCADE",
+                    "onUpdate": "CASCADE",
+                    "field": "userId",
+                    "seqType": "Sequelize.BIGINT"
+                }
+            },
+            "indexes": []
+        }
+    },
+    "path": "/home/joel/Sync/Projetos/DevbitTech-Backend/app/migrations/_current.json",
+    "backupPath": "/home/joel/Sync/Projetos/DevbitTech-Backend/app/migrations/_current_bak.json",
+    "exists": false,
+    "revision": 1
+}
