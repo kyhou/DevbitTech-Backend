@@ -9,14 +9,7 @@ const Enumerable = require('linq');
 const moment = require('moment');
 const pino = require('pino');
 
-const fileTransport = pino.transport({
-    target: 'pino/file',
-    options: {
-        destination: `${__dirname}/../../logs/cron.log`,
-        mkdir: true,
-    },
-});
-const logger = pino(fileTransport);
+const logger = pino();
 const contract_helpers = require('../helpers/contract_helpers');
 
 /**

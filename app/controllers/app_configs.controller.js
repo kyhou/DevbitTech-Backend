@@ -8,18 +8,10 @@ const AppConfigs = db.app_configs;
 const op = db.Sequelize.Op;
 const pino = require('pino');
 
-const fileTransport = pino.transport({
-    target: 'pino/file',
-    options: {
-        destination: `${__dirname}/../../logs/app_configs.log`,
-        mkdir: true,
-    },
-});
-
 /**
  * @type {Logger}
  */
-const logger = pino(fileTransport);
+const logger = pino();
 
 /**
  * Returns all the key/value pairs of configurations.
