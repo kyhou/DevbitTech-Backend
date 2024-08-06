@@ -3,6 +3,7 @@
   "main": "api/index.js",
   "private": true,
   "scripts": {
+    "start": "node api/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Joel Vicente Filho <devbittech@gmail.com>",
