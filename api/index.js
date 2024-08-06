@@ -30,7 +30,7 @@ db.sequelize.sync();
 import glob from 'glob';
 import path from 'path';
 
-glob.sync('./app/routes/**/*.js').forEach(async (file) => {
+glob.sync('../app/routes/**/*.js').forEach(async (file) => {
   const module = await import(path.resolve(file));
   module.default(app);
 });
