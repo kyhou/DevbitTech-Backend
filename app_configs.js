@@ -11,7 +11,6 @@ async function appConfigs() {
      */
     const logger = pino();
 
-
     try {
         let configs = await AppConfigs.getAll();
         if (configs) {

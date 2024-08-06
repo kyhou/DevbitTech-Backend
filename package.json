@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "main": "index.js",
+  "main": "api/index.js",
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
