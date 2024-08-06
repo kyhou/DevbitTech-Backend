@@ -1,12 +1,8 @@
-import express from "express";
 import newPasswordsController from "../controllers/new_passwords.controller.js";
 
-export default function (app) {
-
-    let router = express.Router();
-
+export default function (router) {
     router.get(
-        "/findOne/:key",
+        "/api/new_passwords/findOne/:key",
         newPasswordsController.findOne
     );
 
@@ -18,5 +14,5 @@ export default function (app) {
         next();
     });
 
-    app.use('/api/new_passwords', router);
+    return router;
 };

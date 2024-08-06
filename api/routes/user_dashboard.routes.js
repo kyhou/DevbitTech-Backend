@@ -1,43 +1,40 @@
-import express from "express";
 import { authJwt } from "../middleware/index.js";
 import userDashboard from "../controllers/user_dashboard.controller.js";
 
-export default app => {
-    let router = express.Router();
-
+export default function (router) {
     router.get(
-        "/:userId",
+        "/api/user/:userId",
         [authJwt.verifyToken],
         userDashboard.getAportes);
 
     router.get(
-        "/getAutoReinvest/:userId",
+        "/api/user/getAutoReinvest/:userId",
         [authJwt.verifyToken],
         userDashboard.getAutoReinvest);
 
     router.get(
-        "/getBalanceOfType/:userId/:aporteType",
+        "/api/user/getBalanceOfType/:userId/:aporteType",
         [authJwt.verifyToken],
         userDashboard.getBalanceOfType);
 
     router.put(
-        "/updateAutoReinvest/:userId",
+        "/api/user/updateAutoReinvest/:userId",
         [authJwt.verifyToken],
         userDashboard.updateAutoReinvest);
 
     router.post(
-        "/newTransaction/:userId",
+        "/api/user/newTransaction/:userId",
         [authJwt.verifyToken],
         userDashboard.newTransaction);
 
     router.get(
-        "/getUserProfits/:userId",
+        "/api/user/getUserProfits/:userId",
         [authJwt.verifyToken],
         userDashboard.getUserProfits
     );
 
     router.get(
-        "/getAportesInitialSum/:userId",
+        "/api/user/getAportesInitialSum/:userId",
         [authJwt.verifyToken],
         userDashboard.getAportesInitialSum
     );
@@ -50,5 +47,5 @@ export default app => {
         next();
     });
 
-    app.use('/api/user', router);
+    return router;
 };

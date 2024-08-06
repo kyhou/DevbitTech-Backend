@@ -1,11 +1,10 @@
-import express from "express";
 import { authJwt } from "../middleware/index.js";
 import aportes_page from "../controllers/aportes_admin_page.controller.js";
 
-export default app => {
-    let router = express.Router();
 
-    router.get("/",
+
+export default function (router) {
+    router.get("/api/aportesAdminPage/",
         [
             authJwt.verifyToken,
             authJwt.isAdmin
@@ -14,7 +13,7 @@ export default app => {
     );
 
     router.post(
-        "/updateAporte",
+        "/api/aportesAdminPage/updateAporte",
         [
             authJwt.verifyToken,
             authJwt.isAdmin
@@ -23,7 +22,7 @@ export default app => {
     );
 
     router.post(
-        "/newAporte",
+        "/api/aportesAdminPage/newAporte",
         [
             authJwt.verifyToken,
             authJwt.isAdmin
@@ -32,7 +31,7 @@ export default app => {
     );
 
     router.post(
-        "/generateContract",
+        "/api/aportesAdminPage/generateContract",
         [
             authJwt.verifyToken,
             authJwt.isAdmin,
@@ -48,5 +47,5 @@ export default app => {
         next();
     });
 
-    app.use('/api/aportesAdminPage', router);
+    return router;
 };

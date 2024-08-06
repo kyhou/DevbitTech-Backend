@@ -1,22 +1,19 @@
-import express from "express";
 import { authJwt } from "../middleware/index.js";
 import transactions_page from "../controllers/transactions_admin_page.controller.js";
 
-export default app => {
-    let router = express.Router();
-
-    router.get("/",
+export default function (router) {
+    router.get("/api/transactionsAdminPage/",
         [authJwt.verifyToken, authJwt.isAdmin],
         transactions_page.returnTransactionsData
     );
 
-    router.get("/:transactionId",
+    router.get("/api/transactionsAdminPage/:transactionId",
         [authJwt.verifyToken, authJwt.isAdmin],
         transactions_page.getTransactionData
     );
 
     router.post(
-        "/updateTransaction",
+        "/api/transactionsAdminPage/updateTransaction",
         [
             authJwt.verifyToken, 
             authJwt.isAdmin
@@ -25,7 +22,7 @@ export default app => {
     );
 
     router.post(
-        "/newTransaction",
+        "/api/transactionsAdminPage/newTransaction",
         [
             authJwt.verifyToken, 
             authJwt.isAdmin
@@ -34,7 +31,7 @@ export default app => {
     );
     
     router.post(
-        "/toggleTransactionActive",
+        "/api/transactionsAdminPage/toggleTransactionActive",
         [
             
             authJwt.verifyToken, 
@@ -44,7 +41,7 @@ export default app => {
     );
 
     router.get(
-        "/getUserAportes/:userId",
+        "/api/transactionsAdminPage/getUserAportes/:userId",
         [
             authJwt.verifyToken,
             authJwt.isAdmin
@@ -59,5 +56,6 @@ export default app => {
         );
         next();
     });
-    app.use('/api/transactionsAdminPage', router);
+    
+    return router;
 };

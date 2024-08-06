@@ -1,27 +1,24 @@
-import express from "express";
 import { authJwt } from "../middleware/index.js";
 import users_details from "../controllers/users_details.controller.js";
 
-export default app => {
-    let router = express.Router();
-
+export default function (router) {
     router.get(
-        "/id/:id", 
+        "/api/usersDetails/id/:id", 
         [authJwt.verifyToken],
         users_details.findOne
     );
     
     router.get(
-        "/name/:id", 
+        "/api/usersDetails/name/:id", 
         [authJwt.verifyToken],
         users_details.findName
     );
     
     router.get(
-        "/all", 
+        "/api/usersDetails/all", 
         [authJwt.verifyToken],
         users_details.findAll
     );
     
-    app.use('/api/usersDetails', router);
+    return router;
 };

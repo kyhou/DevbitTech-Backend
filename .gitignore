@@ -129,7 +129,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-/app/config/*.key*
-/app/config/credentials.json
-/app/config/service.json
+/api/config/*.key*
+/api/config/credentials.json
+/api/config/service.json
+/api/config/config.josn
 .vercel
+.sequelizerc
+.launch.json

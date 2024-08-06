@@ -1,40 +1,37 @@
-import express from "express";
 import { authJwt } from "../middleware/index.js";
 import profits_page from "../controllers/profits_admin_page.controller.js";
 
-export default app => {
-    let router = express.Router();
-
-    router.get("/",
+export default function (router) {
+    router.get("/api/profitsAdminPage/",
         [authJwt.verifyToken, authJwt.isAdmin],
         profits_page.returnProfitsData
     );
 
-    router.get("/:id",
+    router.get("/api/profitsAdminPage/:id",
         [authJwt.verifyToken, authJwt.isAdmin],
         profits_page.getProfitData
     );
 
     router.post(
-        "/updateProfit",
+        "/api/profitsAdminPage/updateProfit",
         [
-            authJwt.verifyToken, 
+            authJwt.verifyToken,
             authJwt.isAdmin
         ],
         profits_page.updateProfit
     );
 
     router.post(
-        "/newProfit",
+        "/api/profitsAdminPage/newProfit",
         [
-            authJwt.verifyToken, 
+            authJwt.verifyToken,
             authJwt.isAdmin
         ],
         profits_page.newProfit
     );
 
     router.get(
-        "/getUserAportes/:userId",
+        "/api/profitsAdminPage/getUserAportes/:userId",
         [
             authJwt.verifyToken,
             authJwt.isAdmin
@@ -49,5 +46,6 @@ export default app => {
         );
         next();
     });
-    app.use('/api/profitsAdminPage', router);
+
+    return router;
 };

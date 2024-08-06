@@ -1,21 +1,18 @@
-import express from "express";
 import { authJwt } from "../middleware/index.js";
 import withdraws_page from "../controllers/withdraws_admin_page.controller.js";
 
-export default app => {
-    let router = express.Router();
-
-    router.get("/",
+export default function (router) {
+    router.get("/api/withdrawsAdminPage/",
         [authJwt.verifyToken, authJwt.isAdmin],
         withdraws_page.returnWithdraws
     );
 
-    router.post("/toggleTransactionExecuted",
+    router.post("/api/withdrawsAdminPage/toggleTransactionExecuted",
         [authJwt.verifyToken, authJwt.isAdmin],
         withdraws_page.toggleTransactionExecuted
     );
 
-    router.post("/toggleUserTransactionsExecuted",
+    router.post("/api/withdrawsAdminPage/toggleUserTransactionsExecuted",
         [authJwt.verifyToken, authJwt.isAdmin],
         withdraws_page.toggleUserTransactionsExecuted
     );
@@ -27,5 +24,6 @@ export default app => {
         );
         next();
     });
-    app.use('/api/withdrawsAdminPage', router);
+    
+    return router;
 };

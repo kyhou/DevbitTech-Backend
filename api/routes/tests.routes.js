@@ -1,26 +1,23 @@
-import express from "express";
 import { authJwt } from "../middleware/index.js";
 import users from "../controllers/users.controller.js";
 
-export default app => {
-    let router = express.Router();
-
-    router.get("/all", users.allAccess);
+export default function (router) {
+    router.get("/api/test/all", users.allAccess);
 
     router.get(
-        "/user",
+        "/api/test/user",
         [authJwt.verifyToken],
         users.userBoard
     );
 
     router.get(
-        "/colab",
+        "/api/test/colab",
         [authJwt.verifyToken, authJwt.isColaborator],
         users.colaboratorBoard
     );
 
     router.get(
-        "/admin",
+        "/api/test/admin",
         [authJwt.verifyToken, authJwt.isAdmin],
         users.adminBoard
     );
@@ -33,5 +30,5 @@ export default app => {
         next();
     });
 
-    app.use('/api/test', router);
+    return router;
 }

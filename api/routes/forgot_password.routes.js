@@ -1,11 +1,8 @@
-import express from "express";
 import forgot_password from "../controllers/forgot_password.controller.js";
 
-export default app => {
-    let router = express.Router();
-
+export default function (router) {
     router.post(
-        "/send",
+        "/api/forgot_password/send",
         forgot_password.send
     );
 
@@ -17,5 +14,5 @@ export default app => {
         next();
     });
 
-    app.use('/api/forgot_password', router);
+    return router;
 };

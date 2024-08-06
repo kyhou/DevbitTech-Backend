@@ -1,22 +1,19 @@
-import express from "express";
 import { authJwt } from "../middleware/index.js";
 import users_page from "../controllers/users_admin_page.controller.js";
 
-export default app => {
-    let router = express.Router();
-
-    router.get("/",
+export default function (router) {
+    router.get("/api/usersAdminPage/",
         [authJwt.verifyToken, authJwt.isAdmin],
         users_page.returnUsersData
     );
 
-    router.get("/:userId",
+    router.get("/api/usersAdminPage/:userId",
         [authJwt.verifyToken, authJwt.isAdmin],
         users_page.getUserData
     );
     
     router.post(
-        "/updateUser",
+        "/api/usersAdminPage/updateUser",
         [
             authJwt.verifyToken, 
             authJwt.isAdmin
@@ -25,7 +22,7 @@ export default app => {
     );
     
     router.post(
-        "/toggleUserActive",
+        "/api/usersAdminPage/toggleUserActive",
         [
             
             authJwt.verifyToken, 
@@ -42,5 +39,5 @@ export default app => {
         next();
     });
 
-    app.use('/api/usersAdminPage', router);
+    return router;
 };

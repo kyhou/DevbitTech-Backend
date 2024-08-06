@@ -1,16 +1,13 @@
-import express from "express";
 import { authJwt } from "../middleware/index.js";
 import profits from "../controllers/profits.controller.js";
 
-export default app => {
-    let router = express.Router();
-
-    router.get("/",
+export default function (router) {
+    router.get("/api/profits/",
         [authJwt.verifyToken],
         profits.findAll
     );
 
-    router.get("/:userId",
+    router.get("/api/profits/:userId",
         [authJwt.verifyToken],
         profits.findAllUserProfits
     );
@@ -23,5 +20,5 @@ export default app => {
         next();
     });
 
-    app.use('/api/profits', router);
+    return router;
 };

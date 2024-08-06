@@ -1,10 +1,7 @@
 import { authJwt, verifySignUp } from "../middleware/index.js";
 import authController from "../controllers/auth.controller.js";
-import express from "express";
 
-export default app => {
-    let router = express.Router();
-
+export default function (router) {
     router.use(function (req, res, next) {
         res.header(
             "Access-Control-Allow-Headers",
@@ -14,7 +11,7 @@ export default app => {
     });
 
     router.post(
-        "/signup",
+        "/api/auth/signup",
         [
             authJwt.verifyToken, 
             authJwt.isAdmin,
@@ -24,9 +21,9 @@ export default app => {
         authController.signup
     );
 
-    router.post("/refreshtoken", authController.refreshToken);
-    router.post("/signin", authController.signin);
-    router.post("/newPassword", authController.newPassword);
+    router.post("/api/auth/refreshtoken", authController.refreshToken);
+    router.post("/api/auth/signin", authController.signin);
+    router.post("/api/auth/newPassword", authController.newPassword);
 
-    app.use('/api/auth', router);
+    return router;
 };

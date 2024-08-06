@@ -1,15 +1,12 @@
-import express from "express";
 import { authJwt } from "../middleware/index.js";
-import userAporteDetails from "../controllers/user_aporte_details.controller.js";
+import userStatement from "../controllers/user_statement.controller.js";
 
-export default app => {
-    let router = express.Router();
-
+export default function (router) {
     router.get(
-        "/:aporteId",
+        "/api/user/statement/:userId", 
         [authJwt.verifyToken],
-        userAporteDetails.findAll
-        );
+        userStatement.findAll
+    );
 
     router.use(function (req, res, next) {
         res.header(
@@ -18,6 +15,6 @@ export default app => {
         );
         next();
     });
-
-    app.use('/api/user/aporteDetails', router);
+    
+    return router;
 };
