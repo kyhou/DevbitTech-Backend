@@ -8,7 +8,12 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   operatorsAliases: 0,
   logging: console.log,
   dialectModule: pg,
-  dialectOptions: {},
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    }
+  },
   pool: {
     max: dbConfig.pool.max,
     min: dbConfig.pool.min,
@@ -17,14 +22,6 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   },
 });
 
-if (process.env.NODE_ENV === "production") {
-  sequelize.dialectOptions = {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      }
-    }
-}
 
 const db = {};
 
