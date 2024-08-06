@@ -1,11 +1,13 @@
-const db = require("../models");
+//@ts-check
+import db from "../models/index.js";
 const Aportes = db.aportes;
-const op = db.Sequelize.Op;
 /**
  * @typedef {import('pino').Logger} Logger
  */
 
-exports.findAll = (req, res) => {
+const AportesController = {};
+
+AportesController.findAll = (req, res) => {
     Aportes.findAll()
         .then(data => {
             if (data) {
@@ -24,7 +26,7 @@ exports.findAll = (req, res) => {
         });
 };
 
-exports.findOne = (req, res) => {
+AportesController.findOne = (req, res) => {
     const id = req.params.id;
 
     Aportes.findByPk(id)
@@ -45,7 +47,7 @@ exports.findOne = (req, res) => {
         });
 };
 
-exports.findAllByUser = (req, res) => {
+AportesController.findAllByUser = (req, res) => {
     const userId = req.params.userId;
 
     Aportes.findAll({
@@ -76,7 +78,7 @@ exports.findAllByUser = (req, res) => {
  * @param {string} contractId 
  * @param {Logger} logger
  */
-exports.updateContractId = async (aporteId, contractId, logger) => {
+AportesController.updateContractId = async (aporteId, contractId, logger) => {
     let aporte = await Aportes.findByPk(aporteId);
     if (aporte) {
         aporte.contractId = contractId;
@@ -87,7 +89,7 @@ exports.updateContractId = async (aporteId, contractId, logger) => {
             return true;
         } else {
             console.error(`Erro ao alterar o id do arquivo do contrato para o Aporte ${aporteId}`);
-            logger.error(err);
+            logger.error(`Erro ao alterar o id do arquivo do contrato para o Aporte ${aporteId}`);
             return false;
         }
     } else {
@@ -95,3 +97,5 @@ exports.updateContractId = async (aporteId, contractId, logger) => {
         return false;
     }
 }
+
+export default AportesController;

@@ -1,19 +1,24 @@
-const extenso = require('extenso');
-const date_helpers = require('./date_helpers');
-const string_helpers = require('./string_helpers');
-const PizZip = require("pizzip");
-const Docxtemplater = require("docxtemplater");
-const fs = require("fs");
-const path = require("path");
-const drive = require('./drive_helpers');
-const tmp = require('tmp');
-const libre = require('libreoffice-convert');
-libre.convertAsync = require('util').promisify(libre.convert);
+import date_helpers from './date_helpers.js';
+import string_helpers from './string_helpers.js';
+import drive from './drive_helpers.js';
+
+import extenso from 'extenso';
+import PizZip from "pizzip";
+import Docxtemplater from "docxtemplater";
+import fs from "fs";
+import path from "path";
+import tmp from 'tmp';
+import libre from 'libreoffice-convert';
+import { promisify } from 'util';
+const convertAsync = promisify(libre.convert);
+const __dirname = import.meta.dirname;
+
+const contract_helpers = {};
 
 /**
 * @typedef {import('pino').Logger} Logger
-* @typedef {import('../models/aportes.model')} Aportes
-* @typedef {import('../models/users_details.model')} UsersDetails
+* @typedef {import('../models/aportes.model.js')} Aportes
+* @typedef {import('../models/users_details.model.js')} UsersDetails
 */
 
 /**
@@ -25,7 +30,7 @@ libre.convertAsync = require('util').promisify(libre.convert);
  * @param {string} template Template para geração do contrato.
  * @param {Logger?} logger Instancia do pino logger.
  */
-const generateContractDocx = async (aporte, users_details, totalValue, template, logger) => {
+contract_helpers.generateContractDocx = async (aporte, users_details, totalValue, template, logger) => {
     const tempDir = tmp.dirSync();
 
     // Load the docx file as binary content
@@ -41,7 +46,7 @@ const generateContractDocx = async (aporte, users_details, totalValue, template,
         linebreaks: true,
     });
 
-    var address = users_details.address + ', '
+    let address = users_details.address + ', '
         + users_details.number + ', ';
 
     if (users_details.complement) {
@@ -83,9 +88,9 @@ const generateContractDocx = async (aporte, users_details, totalValue, template,
         compression: "DEFLATE",
     });
 
-    var contractPdfPath = path.resolve(tempDir.name, `Contrato_${(users_details.firstName + ' ' + users_details.lastName).replace(' ', '_')}_${process.env.APORTE_PREFIX}${aporte.id.padStart(5, "0")}.pdf`);
+    let contractPdfPath = path.resolve(tempDir.name, `Contrato_${(users_details.firstName + ' ' + users_details.lastName).replace(' ', '_')}_${process.env.APORTE_PREFIX}${aporte.id.padStart(5, "0")}.pdf`);
 
-    let resultConvert = await libre.convertAsync(buf, '.pdf', undefined)
+    let resultConvert = await convertAsync(buf, '.pdf', undefined)
     if (resultConvert) {
         fs.writeFileSync(contractPdfPath, resultConvert);
         logger.info("Contrato convertido com sucesso.");
@@ -108,4 +113,4 @@ const generateContractDocx = async (aporte, users_details, totalValue, template,
     return "";
 }
 
-exports.generateContractDocx = generateContractDocx;
+export default contract_helpers;

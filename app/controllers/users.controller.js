@@ -1,8 +1,9 @@
-const db = require("../models");
+import db from "../models/index.js";
 const Users = db.users;
-const op = db.Sequelize.Op;
 
-// exports.create = (req, res) => {
+const users = {};
+
+// users.create = (req, res) => {
 //   if (!req.body.title) {
 //     res.status(400).send({
 //       message: "Content can not be empty!"
@@ -28,7 +29,7 @@ const op = db.Sequelize.Op;
 //     });
 // };
 
-exports.findAll = (req, res) => {
+users.findAll = (req, res) => {
   Users.findAll().then(data => {
     if (data) {
       res.send(data);
@@ -46,7 +47,7 @@ exports.findAll = (req, res) => {
   });
 };
 
-exports.findOne = (req, res) => {
+users.findOne = (req, res) => {
   const id = req.params.id;
 
   Users.findByPk(id)
@@ -67,39 +68,39 @@ exports.findOne = (req, res) => {
     });
 };
 
-exports.update = (req, res) => {
+users.update = (req, res) => {
   res.send(req.body);
 };
 
-exports.delete = (req, res) => {
+users.delete = (req, res) => {
 
 };
 
-exports.deleteAll = (req, res) => {
+users.deleteAll = (req, res) => {
 
 };
 
-exports.findByName = (req, res) => {
+users.findByName = (req, res) => {
 
 };
 
-exports.allAccess = (req, res) => {
+users.allAccess = (req, res) => {
   res.status(200).send("Public Content.");
 };
 
-exports.userBoard = (req, res) => {
+users.userBoard = (req, res) => {
   res.status(200).send("User Content.");
 };
 
-exports.adminBoard = (req, res) => {
+users.adminBoard = (req, res) => {
   res.status(200).send("Admin Content.");
 };
 
-exports.colaboratorBoard = (req, res) => {
+users.colaboratorBoard = (req, res) => {
   res.status(200).send("Colaborator Content.");
 };
 
-exports.getMessage = (req, res) => {
+users.getMessage = (req, res) => {
   Users.findOne({
     where: {
       id: req.params.userId
@@ -112,7 +113,7 @@ exports.getMessage = (req, res) => {
   });
 };
 
-exports.clearMessage = (req, res) => {
+users.clearMessage = (req, res) => {
   Users.findOne({
     where: {
       id: req.params.userId
@@ -130,3 +131,5 @@ exports.clearMessage = (req, res) => {
     res.status(500).send("Erro ao buscar a mensagem para remover.");
   });
 };
+
+export default users;

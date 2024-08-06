@@ -1,6 +1,8 @@
-module.exports = app => {
-    const forgot_password = require("../controllers/forgot_password.controller");
-    var router = require("express").Router();
+import express from "express";
+import forgot_password from "../controllers/forgot_password.controller.js";
+
+export default app => {
+    let router = express.Router();
 
     router.post(
         "/send",

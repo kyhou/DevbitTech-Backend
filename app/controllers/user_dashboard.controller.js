@@ -1,16 +1,17 @@
-const db = require("../models");
+import db from "../models/index.js";
 const Aportes = db.aportes;
 const Transactions = db.transactions;
 const UsersSettings = db.usersSettings;
 const Users = db.users;
-const op = db.Sequelize.Op;
-const moment = require("moment");
-const email_helpers = require("../helpers/email_helpers");
-const Enumerable = require("linq");
-const number_helpers = require("../helpers/number_helpers");
+const op = db.Op;
+import moment from "moment";
+import email_helpers from "../helpers/email_helpers.js";
+import Enumerable from "linq";
+import number_helpers from "../helpers/number_helpers.js";
 
-exports.getAportes = (req, res) => {
-    // const DateHelpers = require("../helpers/date_helpers");
+const userDashboard = {};
+
+userDashboard.getAportes = (req, res) => {
     const userId = req.params.userId;
 
     Aportes.findAll({
@@ -31,10 +32,10 @@ exports.getAportes = (req, res) => {
     })
         .then((aportes) => {
             if (aportes) {
-                var results = [];
+                let results = [];
 
                 aportes.forEach((aporte) => {
-                    var result = {
+                    let result = {
                         id: aporte.id,
                         value: aporte.value,
                         transactions: aporte.transactions,
@@ -45,10 +46,10 @@ exports.getAportes = (req, res) => {
                         monthProfits: [],
                     };
 
-                    var monthProfits = [];
-                    var availableProfit = null;
+                    let monthProfits = [];
+                    let availableProfit = null;
 
-                    aporte.transactions.forEach((transaction) => {                        
+                    aporte.transactions.forEach((transaction) => {
                         if (
                             transaction.type == "saque" ||
                             transaction.type == "novoAporte"
@@ -58,28 +59,26 @@ exports.getAportes = (req, res) => {
                             availableProfit += Number(transaction.value);
                         }
 
-                        var transactionMonth = moment(
+                        let transactionMonth = moment(
                             transaction.date,
                             "YYYY-MM-DD",
                             true
                         ).startOf("month");
 
-                        var existingMonth = monthProfits.find((x) => x.month.startOf("month").isSame(transactionMonth));
+                        let existingMonth = monthProfits.find((x) => x.month.startOf("month").isSame(transactionMonth));
 
                         if (existingMonth) {
                             existingMonth.profit += +transaction.value;
-                        } else {
-                            if (transactionMonth.startOf("month") < moment().startOf("month")) {
-                                monthProfits.push({
-                                    month: transactionMonth.clone(),
-                                    profit: +availableProfit + +aporte.value,
-                                });
-                            }
+                        } else if (transactionMonth.startOf("month") < moment().startOf("month")) {
+                            monthProfits.push({
+                                month: transactionMonth.clone(),
+                                profit: +availableProfit + +aporte.value,
+                            });
                         }
                     });
 
                     if (monthProfits.length == 0) {
-                        var aporteMonth = moment(
+                        let aporteMonth = moment(
                             aporte.date,
                             "YYYY-MM-DD",
                             true
@@ -92,7 +91,7 @@ exports.getAportes = (req, res) => {
                     }
 
                     while (monthProfits[monthProfits.length - 1].month.startOf("month") < moment().subtract(1, "M").startOf("month")) {
-                        var temp = { ...monthProfits[monthProfits.length - 1] };
+                        let temp = { ...monthProfits[monthProfits.length - 1] };
                         temp.month = temp.month.clone().add(1, "M");
                         monthProfits.push(temp);
 
@@ -133,7 +132,7 @@ exports.getAportes = (req, res) => {
         });
 };
 
-exports.getAutoReinvest = (req, res) => {
+userDashboard.getAutoReinvest = (req, res) => {
     const userId = req.params.userId;
 
     UsersSettings.findOne({
@@ -152,7 +151,7 @@ exports.getAutoReinvest = (req, res) => {
         });
 };
 
-exports.updateAutoReinvest = (req, res) => {
+userDashboard.updateAutoReinvest = (req, res) => {
     const userId = req.params.userId;
 
     UsersSettings.update(req.body, {
@@ -179,7 +178,7 @@ exports.updateAutoReinvest = (req, res) => {
         });
 };
 
-exports.newTransaction = async (req, res) => {
+userDashboard.newTransaction = async (req, res) => {
     const userId = req.params.userId;
 
     if (new Date().getDate() > 5) {
@@ -222,15 +221,15 @@ exports.newTransaction = async (req, res) => {
             active: true,
         },
     }).then((aportes) => {
-        var totalValueAportes = aportes.reduce((n, { value }) => {
+        let totalValueAportes = aportes.reduce((n, { value }) => {
             return (n += Number(value));
         }, 0);
 
-        var newTransactions = [];
+        let newTransactions = [];
 
         aportes.forEach((aporte) => {
-            var pct = aporte.value / totalValueAportes;
-            var value = number_helpers.toFixed(req.body.value.value * pct, 2);
+            let pct = aporte.value / totalValueAportes;
+            let value = number_helpers.toFixed(req.body.value.value * pct, 2);
 
             newTransactions.push({
                 userId: userId,
@@ -325,11 +324,11 @@ exports.newTransaction = async (req, res) => {
     });
 };
 
-exports.getBalanceOfType = async (req, res) => {
+userDashboard.getBalanceOfType = async (req, res) => {
     const userId = req.params.userId;
     const aporteType = req.params.aporteType;
 
-    var aporte = await Aportes.findOne({
+    let aporte = await Aportes.findOne({
         where: {
             userId: userId,
             active: true,
@@ -348,7 +347,7 @@ exports.getBalanceOfType = async (req, res) => {
     });
 
     if (aporte) {
-        var balance = 0;
+        let balance = 0;
         aporte.transactions.forEach((transaction) => {
             if (
                 transaction.type == "saque" ||
@@ -366,7 +365,7 @@ exports.getBalanceOfType = async (req, res) => {
     }
 };
 
-exports.getUserProfits = async (req, res) => {
+userDashboard.getUserProfits = async (req, res) => {
     const aporteIds = await Aportes.findAll({
         where: [
             {
@@ -379,7 +378,7 @@ exports.getUserProfits = async (req, res) => {
         ]
     });
 
-    var profits = (await Transactions.sum('value', {
+    let profits = (await Transactions.sum('value', {
         where: {
             aporteId: aporteIds.map(aporte => aporte.id),
             type: 'rendimento',
@@ -389,8 +388,8 @@ exports.getUserProfits = async (req, res) => {
     res.status(200).send({ profits });
 };
 
-exports.getAportesInitialSum = async (req, res) => {
-    var aportesSum = (await Aportes.sum('value', {
+userDashboard.getAportesInitialSum = async (req, res) => {
+    let aportesSum = (await Aportes.sum('value', {
         where: [
             {
                 userId: req.params.userId,
@@ -401,3 +400,5 @@ exports.getAportesInitialSum = async (req, res) => {
 
     res.status(200).send({ aportesSum });
 };
+
+export default userDashboard;

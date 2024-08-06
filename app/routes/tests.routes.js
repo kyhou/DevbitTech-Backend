@@ -1,7 +1,9 @@
-module.exports = app => {
-    const { authJwt } = require("../middleware");
-    const users = require("../controllers/users.controller.js");
-    var router = require("express").Router();
+import express from "express";
+import { authJwt } from "../middleware/index.js";
+import users from "../controllers/users.controller.js";
+
+export default app => {
+    let router = express.Router();
 
     router.get("/all", users.allAccess);
 
@@ -32,5 +34,4 @@ module.exports = app => {
     });
 
     app.use('/api/test', router);
-
 }

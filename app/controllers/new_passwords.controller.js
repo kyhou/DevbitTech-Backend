@@ -1,9 +1,10 @@
-const db = require("../models");
-const NewPassword = db.newPassword;
-const Op = db.Sequelize.Op;
+import db from "../models/index.js";
+const new_password = db.newPassword;
 
-exports.findOne = (req, res) => {
-    NewPassword.findOne({
+const NewPassword = {};
+
+NewPassword.findOne = (req, res) => {
+    new_password.findOne({
         where: {
             key: req.params.key
         }
@@ -18,3 +19,5 @@ exports.findOne = (req, res) => {
         res.status(500).send({ message: "Chave inválida."});
     });
 };
+
+export default NewPassword

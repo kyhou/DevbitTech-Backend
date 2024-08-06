@@ -1,4 +1,4 @@
-module.exports = () => {
+export default () => {
     /**
      * Returns the date with added `months` of delay.
     *

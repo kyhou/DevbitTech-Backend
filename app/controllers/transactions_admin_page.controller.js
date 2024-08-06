@@ -1,16 +1,17 @@
-const db = require("../models");
+import db from "../models/index.js";
 const Users = db.users;
 const Aportes = db.aportes;
 const Transactions = db.transactions;
 const UsersDetails = db.usersDetails;
-const Op = db.Sequelize.Op;
 const formatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
 });
-const date_helpers = require('../helpers/date_helpers');
+import date_helpers from '../helpers/date_helpers.js';
 
-exports.returnTransactionsData = (req, res) => {
+const transactions_page = {};
+
+transactions_page.returnTransactionsData = (req, res) => {
     const rows = [];
 
     Transactions.findAll({
@@ -32,7 +33,7 @@ exports.returnTransactionsData = (req, res) => {
         transactions.forEach((transaction) => {
             try {
                 if (transaction) {
-                    var row = {
+                    let row = {
                         id: transaction.id,
                         date: date_helpers.parseDate(transaction.date).format("DD/MM/YYYY"),
                         value: formatter.format(transaction.value),
@@ -64,7 +65,7 @@ exports.returnTransactionsData = (req, res) => {
 
 };
 
-exports.getTransactionData = (req, res) => {
+transactions_page.getTransactionData = (req, res) => {
     Transactions.findByPk(req.params.transactionId).then((transaction) => {
         res.status(200).send({ transaction });
     }).catch(err => {
@@ -72,7 +73,7 @@ exports.getTransactionData = (req, res) => {
     });
 };
 
-exports.updateTransaction = (req, res) => {
+transactions_page.updateTransaction = (req, res) => {
     Transactions.findOne({
         where: {
             id: req.body.transaction.id
@@ -103,7 +104,7 @@ exports.updateTransaction = (req, res) => {
     });
 };
 
-exports.newTransaction = (req, res) => {
+transactions_page.newTransaction = (req, res) => {
     Transactions.create({
         date: new Date(req.body.transaction.date),
         value: req.body.transaction.value,
@@ -126,7 +127,7 @@ exports.newTransaction = (req, res) => {
 };
 
 
-exports.toggleTransactionExecuted = (req, res) => {
+transactions_page.toggleTransactionExecuted = (req, res) => {
     Transactions.findByPk(req.body.transactionId).then((transaction) => {
         transaction.executed = !transaction.executed;
         transaction.save().then(() => {
@@ -138,7 +139,7 @@ exports.toggleTransactionExecuted = (req, res) => {
     });
 };
 
-exports.getUserAportes = (req, res) => {
+transactions_page.getUserAportes = (req, res) => {
     Aportes.findAll({
         where: {
             userId: req.params.userId
@@ -153,3 +154,5 @@ exports.getUserAportes = (req, res) => {
         res.status(500).send({ message: 'Erro ao buscar os aportes do usuário.' });
     });
 };
+
+export default transactions_page;

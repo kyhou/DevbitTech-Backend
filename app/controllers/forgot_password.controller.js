@@ -1,15 +1,18 @@
-const db = require("../models");
+import fs from "fs";
+import path from 'path';
+import email_helpers from '../helpers/email_helpers.js';
+import { v4 as uuidv4 } from 'uuid';
+import db from "../models/index.js";
+
 const NewPassword = db.newPassword;
 const Users = db.users;
-const op = db.Sequelize.Op;
-const fs = require("fs");
-const path = require('path');
-const email_helpers = require('../helpers/email_helpers');
-const { v4: uuidv4 } = require('uuid');
+const __dirname = import.meta.dirname;
 
-exports.send = (req, res) => {
-    var templateTemp;
-    var filePath = path.join(__dirname, "../templates/emails/forgotPassword.html");
+const forgot_password = {};
+
+forgot_password.send = (req, res) => {
+    let templateTemp;
+    let filePath = path.join(__dirname, "../templates/emails/forgotPassword.html");
 
     if (fs.existsSync(filePath)) {
         templateTemp = fs.readFileSync(filePath, 'utf-8');
@@ -37,7 +40,7 @@ exports.send = (req, res) => {
             res.status(error.status).send({ message: "Erro ao enviar email." });
         });
 
-        var template = templateTemp.replace(/LINK_DA_TROCA_DE_SENHA/g, `https://${process.env.MAIN_DOMAIN}/new-password?key=` + uuid);
+        let template = templateTemp.replace(/LINK_DA_TROCA_DE_SENHA/g, `https://${process.env.MAIN_DOMAIN}/new-password?key=` + uuid);
 
         let sendEmailResult = await email_helpers.send(
             `no-reply@${process.env.EMAIL_DOMAIN}`,
@@ -52,3 +55,5 @@ exports.send = (req, res) => {
         }
     });
 };
+
+export default forgot_password;

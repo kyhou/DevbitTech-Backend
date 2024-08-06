@@ -1,9 +1,9 @@
-module.exports = function (app) {
-    const { verifySignUp } = require("../middleware");
-    const authController = require("../controllers/auth.controller");
-    const { authJwt } = require("../middleware");
+import { authJwt, verifySignUp } from "../middleware/index.js";
+import authController from "../controllers/auth.controller.js";
+import express from "express";
 
-    var router = require("express").Router();
+export default app => {
+    let router = express.Router();
 
     router.use(function (req, res, next) {
         res.header(

@@ -1,9 +1,9 @@
-const db = require("../models");
-const Aportes = db.aportes;
+import db from "../models/index.js";
 const Transactions = db.transactions;
-const op = db.Sequelize.Op;
 
-exports.findAll = (req, res) => {
+const UserAporteDetails = {};
+
+UserAporteDetails.findAll = (req, res) => {
     const aporteId = req.params.aporteId;
 
     Transactions.findAll({
@@ -27,3 +27,5 @@ exports.findAll = (req, res) => {
             });
         });
 };
+
+export default UserAporteDetails;

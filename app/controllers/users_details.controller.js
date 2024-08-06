@@ -1,8 +1,9 @@
-const db = require("../models");
+import db from "../models/index.js";
 const UsersDetails = db.usersDetails;
-const op = db.Sequelize.Op;
 
-exports.findOne = (req, res) => {
+const users_details = {};
+
+users_details.findOne = (req, res) => {
     const id = req.params.id;
 
     UsersDetails.findOne({
@@ -25,7 +26,7 @@ exports.findOne = (req, res) => {
     });
 };
 
-exports.findName = (req, res) => {
+users_details.findName = (req, res) => {
     const id = req.params.id;
 
     UsersDetails.findOne({
@@ -52,7 +53,7 @@ exports.findName = (req, res) => {
     });
 };
 
-exports.findAll = (req, res) => {
+users_details.findAll = (req, res) => {
     UsersDetails.findAll({
         order: [
             ['firstName', 'ASC'],
@@ -73,3 +74,5 @@ exports.findAll = (req, res) => {
         });
     });
 };
+
+export default users_details;

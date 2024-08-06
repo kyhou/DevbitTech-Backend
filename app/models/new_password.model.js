@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize) => {
+export default (sequelize, Sequelize) => {
     const NewPassword = sequelize.define("new_password", {
         key: {
             type: Sequelize.STRING,

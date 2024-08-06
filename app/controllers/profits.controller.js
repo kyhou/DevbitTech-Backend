@@ -1,9 +1,10 @@
-const db = require("../models");
+import db from "../models/index.js";
 const Profits = db.profits;
 const Aportes = db.aportes;
-const op = db.Sequelize.Op;
 
-exports.findAll = (req, res) => {
+const profits = {};
+
+profits.findAll = (req, res) => {
     Profits.findAll({
         order: [["startDate", "DESC"]],
     })
@@ -22,7 +23,7 @@ exports.findAll = (req, res) => {
         });
 };
 
-exports.findAllUserProfits = async (req, res) =>  {
+profits.findAllUserProfits = async (req, res) =>  {
     const aporteIds = await Aportes.findAll({
         where: [
             {
@@ -57,3 +58,5 @@ exports.findAllUserProfits = async (req, res) =>  {
             });
         });
 };
+
+export default profits;

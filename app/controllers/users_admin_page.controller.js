@@ -1,12 +1,13 @@
-const db = require("../models");
+import db from "../models/index.js";
 const Users = db.users;
 const UsersDetails = db.usersDetails;
 const UsersSettings = db.usersSettings;
 const Roles = db.roles;
-const Op = db.Sequelize.Op;
-const argon2 = require('argon2');
+import argon2 from 'argon2';
 
-exports.returnUsersData = (req, res) => {
+const users_page = {};
+
+users_page.returnUsersData = (req, res) => {
     const rows = [];
 
     Users.findAll({
@@ -29,7 +30,7 @@ exports.returnUsersData = (req, res) => {
             users.forEach((user) => {
                 try {
                     if (user) {
-                        var row = {
+                        let row = {
                             id: user.id,
                             email: user.email,
                             active: user.active ? "Ativo" : "Inativo",
@@ -37,7 +38,7 @@ exports.returnUsersData = (req, res) => {
                             roles: ""
                         };
 
-                        var rolesDesc = [];
+                        let rolesDesc = [];
                         user.roles.forEach((role) => {
                             rolesDesc.push(role.description);
                         })
@@ -70,7 +71,7 @@ exports.returnUsersData = (req, res) => {
 
 };
 
-exports.getUserData = (req, res) => {
+users_page.getUserData = (req, res) => {
     Users.findByPk(req.params.userId).then((user) => {
         res.status(200).send({ user });
     }).catch(err => {
@@ -79,7 +80,7 @@ exports.getUserData = (req, res) => {
     });
 };
 
-exports.updateUser = (req, res) => {
+users_page.updateUser = (req, res) => {
     if (req.body.user.password) {
         argon2.hash(req.body.user.password, { type: argon2.argon2id }).then((hash) => {
             Users.update(
@@ -160,7 +161,7 @@ exports.updateUser = (req, res) => {
     });
 }
 
-exports.toggleUserActive = (req, res) => {
+users_page.toggleUserActive = (req, res) => {
     Users.findByPk(req.body.userId).then((user) => {
         user.active = !user.active;
         user.save().then(() => {
@@ -171,3 +172,5 @@ exports.toggleUserActive = (req, res) => {
         });
     });
 }
+
+export default users_page;

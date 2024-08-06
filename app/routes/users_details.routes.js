@@ -1,7 +1,9 @@
-module.exports = app => {
-    const users_details = require("../controllers/users_details.controller");
-    const { authJwt } = require("../middleware");
-    var router = require("express").Router();
+import express from "express";
+import { authJwt } from "../middleware/index.js";
+import users_details from "../controllers/users_details.controller.js";
+
+export default app => {
+    let router = express.Router();
 
     router.get(
         "/id/:id", 

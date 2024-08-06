@@ -1,7 +1,8 @@
-module.exports = app => {
-    const users = require("../controllers/users.controller.js");
+import express from "express";
+import users from "../controllers/users.controller.js";
 
-    var router = require("express").Router();
+export default app => {
+    let router = express.Router();
 
     // router.post("/", users.create); // new user
 

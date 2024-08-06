@@ -22,7 +22,9 @@
 //     return {getDays};
 // }) ();
 
-const moment = require('moment');
+import moment from "moment";
+
+const date_helpers = {};
 
 /**
  * Return the number of days in the month/year
@@ -30,7 +32,7 @@ const moment = require('moment');
  * @param {Number} month
  * @returns {Number} The number of days
  */
-exports.getDays = (year, month) => {
+date_helpers.getDays = (year, month) => {
     return new Date(year, month, 0).getDate();
 }
 
@@ -39,7 +41,7 @@ exports.getDays = (year, month) => {
  * @param {Date} date
  * @returns {Number} The number of days
  */
-exports.getDateDays = (date) => {
+date_helpers.getDateDays = (date) => {
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
 }
 
@@ -49,13 +51,15 @@ exports.getDateDays = (date) => {
  * @param {String} locale The locale for the month
  * @returns {String} The name of the month
  */
-exports.getMonthName = (monthNumber, locale = 'pt-BR') => {
+date_helpers.getMonthName = (monthNumber, locale = 'pt-BR') => {
     const date = new Date();
     date.setMonth(monthNumber);
 
     return date.toLocaleString(locale, { month: 'long' });
 }
 
-exports.parseDate = (date) => {
+date_helpers.parseDate = (date) => {
     return moment(date + 'T00:00:00-03:00');
 }
+
+export default date_helpers;

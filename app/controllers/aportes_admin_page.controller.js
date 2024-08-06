@@ -1,19 +1,21 @@
 //@ts-check
-const db = require("../models");
+import date_helpers from '../helpers/date_helpers.js';
+import Enumerable from 'linq';
+import moment from 'moment';
+import contract_helpers from '../helpers/contract_helpers.js';
+import AportesController from '../controllers/aportes.controller.js';
+import db from "../models/index.js";
+
 const Users = db.users;
 const Aportes = db.aportes;
 const UsersDetails = db.usersDetails;
 const Profits = db.profits;
-const Op = db.Sequelize.Op;
 const formatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
 });
-const date_helpers = require('../helpers/date_helpers');
-const Enumerable = require('linq');
-const moment = require('moment');
-const contract_helpers = require('../helpers/contract_helpers');
-const AportesController = require('../controllers/aportes.controller');
+
+const aportes_page = {};
 
 /**
  * @typedef {import('express').Request} Request
@@ -25,7 +27,7 @@ const AportesController = require('../controllers/aportes.controller');
  * @param {Request} req 
  * @param {Response} res 
  */
-exports.returnAportesData = (req, res) => {
+aportes_page.returnAportesData = (req, res) => {
     const rows = [];
 
     Aportes.findAll({
@@ -51,7 +53,7 @@ exports.returnAportesData = (req, res) => {
                     if (aporte) {
                         let profits = Enumerable.from(aporte.profits).where((/** @type {any} */ x) => x.startDate <= moment().format("YYYY-MM-DD") && (x.endDate >= moment().format("YYYY-MM-DD") || x.endDate == null)).orderByDescending((/** @type {any} */ x) => x.startDate).thenBy((/** @type {any} */ x) => x.aporteId).firstOrDefault();
 
-                        var row = {
+                        let row = {
                             id: process.env.APORTE_PREFIX + aporte.id.padStart(5, "0"),
                             date: date_helpers.parseDate(aporte.date).format("DD/MM/YYYY"),
                             value: formatter.format(aporte.value),
@@ -91,7 +93,7 @@ exports.returnAportesData = (req, res) => {
  * @param {Request} req 
  * @param {Response} res 
  */
-exports.updateAporte = (req, res) => {
+aportes_page.updateAporte = (req, res) => {
     Aportes.findOne({
         where: {
             id: Number(req.body.aporte.id.replace(/[^0-9]/g, ''))
@@ -121,7 +123,7 @@ exports.updateAporte = (req, res) => {
  * @param {Request} req 
  * @param {Response} res 
  */
-exports.newAporte = (req, res) => {
+aportes_page.newAporte = (req, res) => {
     Aportes.create({
         date: new Date(req.body.aporte.date),
         value: req.body.aporte.value,
@@ -146,7 +148,7 @@ exports.newAporte = (req, res) => {
  * @param {Request} req 
  * @param {Response} res 
  */
-exports.generateContract = async (req, res) => {
+aportes_page.generateContract = async (req, res) => {
     let aporteId = Number(req.body.aporteId.replace(/[^0-9]/g, ''));
 
     let aporte = await Aportes.findOne({
@@ -183,3 +185,5 @@ exports.generateContract = async (req, res) => {
         }
     }
 };
+
+export default aportes_page;

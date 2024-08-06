@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
-const config = require("../config/auth.config.js");
-const db = require("../models");
+import jwt from "jsonwebtoken";
+import config from "../config/auth.config.js";
+import db from "../models/index.js";
 const Users = db.users;
 const { TokenExpiredError } = jwt;
 
@@ -41,8 +41,8 @@ let verifyToken = (req, res, next) => {
 let isAdmin = (req, res, next) => {
   Users.findByPk(req.userId).then(user => {
     user.getRoles().then(roles => {
-      for (const element of roles) {
-        if (element.description === "admin") {
+      for (const role of roles) {
+        if (role.description === "admin") {
           next();
           return;
         }
@@ -58,8 +58,8 @@ let isAdmin = (req, res, next) => {
 let isColaborator = (req, res, next) => {
   Users.findByPk(req.userId).then(user => {
     user.getRoles().then(roles => {
-      for (const element of roles) {
-        if (element.description === "colab") {
+      for (const role of roles) {
+        if (role.description === "colab") {
           next();
           return;
         }
@@ -75,8 +75,8 @@ let isColaborator = (req, res, next) => {
 let isColaboratorOrAdmin = (req, res, next) => {
   Users.findByPk(req.userId).then(user => {
     user.getRoles().then(roles => {
-      for (const element of roles) {
-        if (element.description === "colab" || element.description === "admin") {
+      for (const role of roles) {
+        if (role.description === "colab" || role.description === "admin") {
           next();
           return;
         }
@@ -96,4 +96,4 @@ const authJwt = {
   isColaboratorOrAdmin: isColaboratorOrAdmin
 };
 
-module.exports = authJwt;
+export default authJwt;

@@ -1,7 +1,9 @@
-module.exports = app => {
-    const { authJwt } = require("../middleware");
-    const aportes_page = require("../controllers/aportes_admin_page.controller");
-    var router = require("express").Router();
+import express from "express";
+import { authJwt } from "../middleware/index.js";
+import aportes_page from "../controllers/aportes_admin_page.controller.js";
+
+export default app => {
+    let router = express.Router();
 
     router.get("/",
         [

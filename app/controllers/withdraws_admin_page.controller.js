@@ -1,17 +1,18 @@
-const db = require("../models");
+import db from "../models/index.js";
 const Users = db.users;
 const Aportes = db.aportes;
 const Transactions = db.transactions;
 const UsersDetails = db.usersDetails;
-const Op = db.Sequelize.Op;
 const formatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
 });
-const date_helpers = require('../helpers/date_helpers');
-const Enumerable = require('linq');
+import date_helpers from '../helpers/date_helpers.js';
+import Enumerable from 'linq';
 
-exports.returnWithdraws = (req, res) => {
+const withdraws_page = {};
+
+withdraws_page.returnWithdraws = (req, res) => {
     const rows = [];
 
     Transactions.findAll({
@@ -82,7 +83,7 @@ exports.returnWithdraws = (req, res) => {
     });
 };
 
-exports.toggleTransactionExecuted = (req, res) => {
+withdraws_page.toggleTransactionExecuted = (req, res) => {
     Transactions.findByPk(req.body.transactionId).then((transaction) => {
         transaction.executed = !transaction.executed;
         transaction.save().then(() => {
@@ -94,7 +95,7 @@ exports.toggleTransactionExecuted = (req, res) => {
     });
 };
 
-exports.toggleUserTransactionsExecuted = async (req, res) => {
+withdraws_page.toggleUserTransactionsExecuted = async (req, res) => {
     try {
         db.sequelize.transaction(async (t) => {
             Transactions.findAll({
@@ -119,3 +120,5 @@ exports.toggleUserTransactionsExecuted = async (req, res) => {
         res.log.error("Error in the function toggleUserTransactionsExecuted. -> " + error)
     }
 };
+
+export default withdraws_page;

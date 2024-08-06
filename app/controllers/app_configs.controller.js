@@ -3,10 +3,11 @@
  * @typedef {{key: string, value: string}} Configs
  */
 
-const db = require("../models");
-const AppConfigs = db.app_configs;
-const op = db.Sequelize.Op;
-const pino = require('pino');
+import db from "../models/index.js";
+import pino from 'pino';
+
+const app_configs = db.app_configs;
+const AppConfigs = {};
 
 /**
  * @type {Logger}
@@ -17,25 +18,25 @@ const logger = pino();
  * Returns all the key/value pairs of configurations.
  * @returns {Promise<Configs[]>}
  */
-exports.getAll = async () => {
-    let configs = await AppConfigs.findAll();
+AppConfigs.getAll = async () => {
+    let configs = await app_configs.findAll();
 
     if (configs) {
         logger.info("Configurations found");
         return configs;
     } else {
-        logger.fatal("No coonfigurations found");
+        logger.fatal("No configurations found");
         return [];
     }
 };
 
 /**
- * Return the value associeted with a specific key.
+ * Return the value associated with a specific key.
  * @param {string} key Application configuration key.
- * @returns {Promise<string>} The value associeted with the configuration key.
+ * @returns {Promise<string>} The value associated with the configuration key.
  */
-exports.getOne = async (key) => {
-    let config = await Aportes.findByPk(key);
+AppConfigs.getOne = async (key) => {
+    let config = await app_configs.findByPk(key);
 
     if (config) {
         logger.info("Configuration key found");
@@ -45,3 +46,5 @@ exports.getOne = async (key) => {
         return "";
     }
 };
+
+export default AppConfigs;

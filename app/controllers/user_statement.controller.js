@@ -1,10 +1,11 @@
-const db = require("../models");
+import db from "../models/index.js";
 const Aportes = db.aportes;
 const Transactions = db.transactions;
-const op = db.Sequelize.Op;
-const Enumerable = require('linq');
+import Enumerable from 'linq';
 
-exports.findAll = (req, res) => {
+const userStatement = {};
+
+userStatement.findAll = (req, res) => {
     const userId = req.params.userId;
 
     Transactions.findAll({
@@ -18,20 +19,20 @@ exports.findAll = (req, res) => {
     })
         .then(data => {
             if (data && data.length > 0) {
-                var results = [];
+                let results = [];
 
-                var transactionsByMonth = Enumerable.from(data)
+                let transactionsByMonth = Enumerable.from(data)
                     .groupBy("reg => new Date(reg.date + 'T00:00:00-03:00').getMonth()")
                     .select("{key:$.key(),value:$.toArray()}")
                     .toArray();
 
                 transactionsByMonth.forEach(month => {
-                    var transactions = Enumerable.from(month.value);
+                    let transactions = Enumerable.from(month.value);
 
-                    var withdrawValue = transactions.where(x => x.type == "saque").sum(n => Number(n.value));
-                    var profitValue = transactions.where(x => x.type == "rendimento").sum(n => Number(n.value));
-                    var newAporteValue = transactions.where(x => x.type == "novoAporte").sum(n => Number(n.value));
-                    var pctProfit = transactions.where(x => x.type == "rendimento").select(x => x.pct_profit).firstOrDefault();
+                    let withdrawValue = transactions.where(x => x.type == "saque").sum(n => Number(n.value));
+                    let profitValue = transactions.where(x => x.type == "rendimento").sum(n => Number(n.value));
+                    let newAporteValue = transactions.where(x => x.type == "novoAporte").sum(n => Number(n.value));
+                    let pctProfit = transactions.where(x => x.type == "rendimento").select(x => x.pct_profit).firstOrDefault();
 
                     if (transactions.any(x => x.type == "novoAporte")) {
                         results.push({
@@ -79,3 +80,5 @@ exports.findAll = (req, res) => {
             });
         });
 };
+
+export default userStatement;

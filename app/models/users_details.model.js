@@ -1,4 +1,4 @@
-module.exports = (sequelize, Sequelize) => {
+export default (sequelize, Sequelize) => {
   const UsersDetails = sequelize.define("users_details", {
     id: {
       type: Sequelize.BIGINT,

@@ -1,7 +1,9 @@
-module.exports = app => {
-    const { authJwt } = require("../middleware");
-    const users_page = require("../controllers/users_admin_page.controller");
-    var router = require("express").Router();
+import express from "express";
+import { authJwt } from "../middleware/index.js";
+import users_page from "../controllers/users_admin_page.controller.js";
+
+export default app => {
+    let router = express.Router();
 
     router.get("/",
         [authJwt.verifyToken, authJwt.isAdmin],

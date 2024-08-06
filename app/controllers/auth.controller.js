@@ -1,17 +1,19 @@
-const db = require("../models");
-const config = require("../config/auth.config");
+import db from "../models/index.js";
+import config from "../config/auth.config.js";
 const Users = db.users;
 const UsersDetails = db.usersDetails;
 const UsersSettings = db.usersSettings;
 const Roles = db.roles;
 const NewPassword = db.newPassword;
 
-const Op = db.Sequelize.Op;
+const Op = db.Op;
 
-var jwt = require("jsonwebtoken");
-const argon2 = require('argon2');
+import { default as jwt } from 'jsonwebtoken';
+import argon2 from 'argon2';
 
-exports.signup = (req, res) => {
+const authController = {};
+
+authController.signup = (req, res) => {
     argon2.hash(req.body.password, { type: argon2.argon2id }).then((hash) => {
         Users.create({
             email: req.body.email.toLowerCase(),
@@ -53,7 +55,7 @@ exports.signup = (req, res) => {
     })
 };
 
-exports.signin = (req, res) => {
+authController.signin = (req, res) => {
     Users.findOne({
         where: {
             email: req.body.email.toLowerCase()
@@ -80,16 +82,16 @@ exports.signin = (req, res) => {
                     });
                 }
 
-                var token = jwt.sign({ id: user.id }, config.secret, {
+                let token = jwt.sign({ id: user.id }, config.secret, {
                     expiresIn: config.jwtExpiration
                 });
 
                 let refreshToken = await db.refreshToken.createToken(user);
 
-                var authorities = [];
+                let authorities = [];
                 user.getRoles().then(roles => {
-                    for (let i = 0; i < roles.length; i++) {
-                        authorities.push("ROLE_" + roles[i].description.toUpperCase());
+                    for (const role of roles) {
+                        authorities.push("ROLE_" + role.description.toUpperCase());
                     }
                     res.status(200).send({
                         id: user.id,
@@ -108,7 +110,7 @@ exports.signin = (req, res) => {
         });
 };
 
-exports.refreshToken = async (req, res) => {
+authController.refreshToken = async (req, res) => {
     const { refreshToken: requestToken } = req.body;
 
     if (requestToken == null) {
@@ -154,13 +156,13 @@ exports.refreshToken = async (req, res) => {
     }
 };
 
-exports.newPassword = (req, res) => {
+authController.newPassword = (req, res) => {
     NewPassword.findOne({
         where: {
             key: req.body.data.key
         }
     }).then((result) => {
-        userId = result.userId;
+        let userId = result.userId;
 
         argon2.hash(req.body.data.passwords.password, { type: argon2.argon2id }).then((hash) => {
             Users.findOne({
@@ -187,3 +189,5 @@ exports.newPassword = (req, res) => {
         res.status(500).send({ message: "Chave inválida." });
     });
 };
+
+export default authController;

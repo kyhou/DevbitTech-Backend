@@ -1,19 +1,19 @@
+import pino from 'pino';
+import AppConfigs from "./app/controllers/app_configs.controller.js";
+
 /**
 * Set enviroment variables from the table app_configs on the database
 */
-module.exports = async () => {
-    const pino = require('pino');
-
+async function appConfigs() {
     /**
      * @typedef {import('pino').Logger} Logger
      * @type {Logger}
      */
     const logger = pino();
 
-    const app_configs = require("./app/controllers/app_configs.controller");
 
     try {
-        let configs = await app_configs.getAll();
+        let configs = await AppConfigs.getAll();
         if (configs) {
             for (let config of configs) {
                 process.env[config.key] = config.value;
@@ -25,4 +25,6 @@ module.exports = async () => {
     } catch (err) {
         throw err;
     }
-}
+};
+
+export default appConfigs;

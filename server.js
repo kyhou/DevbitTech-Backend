@@ -1,63 +1,46 @@
-require('dotenv/config');
-
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const pinoHttp = require('pino-http');
+import 'dotenv/config';
+import express from 'express';
+import bodyParser from 'body-parser';
+import cors from 'cors';
+import pinoHttp from 'pino-http';
+import appConfigs from './app_configs.js';
+import db from './app/models/index.js';
 
 const pino = pinoHttp({
   redact: ['req.headers["x-access-token"]'],
 });
 
-require("./app/helpers/date.prototype")();
-// require('./cron')();
-require('./app_configs')();
-
 const app = express();
-
-if (process.env.FRONTEND_URL) {
-
-  let corsOptions = {
-    origin: process.env.FRONTEND_URL,
+appConfigs();
+const frontendUrl = process.env.FRONTEND_URL;
+const corsOptions = frontendUrl
+  ? {
+    origin: frontendUrl,
     credentials: true,
   }
+  : {};
 
-  app.use(cors(corsOptions));
-} else {
-  app.use(cors());
-}
-
-// parse requests of content-type - application/json
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
-
-// parse requests of content-type - application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: 1 }));
-
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(pino);
 
-const db = require("./app/models");
 db.sequelize.sync();
-// db.sequelize.sync({ alter: true  }).then(() => {
-//   console.log("Alter tables.");
-// });
 
-//TODO: only in development
-// db.sequelize.sync({ force: true }).then(() => {
-//   console.log("Drop and re-sync db.");
-// });
+import glob from 'glob';
+import path from 'path';
 
-let glob = require('glob'),
-  path = require('path');
-
-glob.sync('./app/routes/**/*.js').forEach(function (file) {
-  require(path.resolve(file))(app);
+glob.sync('./app/routes/**/*.js').forEach(async (file) => {
+  const module = await import(path.resolve(file));
+  module.default(app);
 });
 
+if (process.env.NODE_ENV === 'development') {
+  // set port, listen for requests
+  const PORT = process.env.PORT || 8088;
+  app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}.`);
+  });
+}
 
-// // set port, listen for requests
-// const PORT = process.env.PORT || 8088;
-// app.listen(PORT, () => {
-//   console.log(`Server is running on port ${PORT}.`);
-// });
-
-module.exports = app;
+export default app;

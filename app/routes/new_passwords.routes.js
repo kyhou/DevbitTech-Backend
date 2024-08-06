@@ -1,7 +1,9 @@
-module.exports = function (app) {
-    const newPasswordsController = require("../controllers/new_passwords.controller");
+import express from "express";
+import newPasswordsController from "../controllers/new_passwords.controller.js";
 
-    var router = require("express").Router();
+export default function (app) {
+
+    let router = express.Router();
 
     router.get(
         "/findOne/:key",

@@ -1,7 +1,8 @@
-const { google } = require('googleapis');
-const path = require('path');
-const fs = require('fs');
-const mime = require('mime-types')
+import { google } from 'googleapis';
+import path from 'path';
+import fs from 'fs';
+import mime from 'mime-types';
+const __dirname = import.meta.dirname;
 
 const getDriveService = () => {
   const KEYFILEPATH = path.join(__dirname, '../config/service.json');
@@ -15,40 +16,40 @@ const getDriveService = () => {
   return driveService;
 };
 
-const drive = getDriveService();
+const drive = {};
+const driveService = getDriveService();
 
 /**
  * 
  * @param {string} fileName File name to upload
  * @param {string} filePath Path to the file to upload
  * @param {string} fileType the extension of file to upload
- * @returns {Promisse<string>}
+ * @returns {Promise<string>}
  */
-const upload = async (fileName, filePath, fileType) => {
-  let res = await drive.files.create({
-    resource: {
-      name: fileName,
-      parents: [process.env.GDRIVE_FOLDER_ID],
-    },
-    media: {
-      mimeType: mime.lookup(fileType),
-      body: fs.createReadStream(filePath),
-    },
-    permissions: [
-      {
-        "role": "reader",
-        "type": "public"
-      }
-    ],
-    fields: 'id,name',
-  });
-
-  if (res) {
-    return res.data.id;
-  } else {
+drive.upload = async (fileName, filePath, fileType) => {
+  try {
+    const res = await driveService.files.create({
+      resource: {
+        name: fileName,
+        parents: [process.env.GDRIVE_FOLDER_ID],
+      },
+      media: {
+        mimeType: mime.lookup(fileType),
+        body: fs.createReadStream(filePath),
+      },
+      permissions: [
+        {
+          "role": "reader",
+          "type": "public"
+        }
+      ],
+      fields: 'id,name',
+    });
+    return res.data.id;    
+  } catch (error) {
     console.error(`Erro ao fazer o upload do arquivo ${fileName}`);
     return "";
   }
 };
 
-exports.upload = upload;
+export default drive;

@@ -1,8 +1,10 @@
-let nodemailer = require('nodemailer');
-const pino = require('pino');
+import nodemailer from 'nodemailer';
+import pino from 'pino';
 const logger = pino();
 
-const send = async (from, to, subject, html, text) => {
+const email_helpers = {};
+
+email_helpers.send = async (from, to, subject, html, text) => {
     try {
         let transporter = nodemailer.createTransport({
             host: "smtp.hostinger.com",
@@ -36,4 +38,4 @@ const send = async (from, to, subject, html, text) => {
     }
 }
 
-exports.send = send;
+export default email_helpers

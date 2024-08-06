@@ -1,42 +1,66 @@
-const dbConfig = require("../config/db.config.js");
+import { Sequelize, Op } from "sequelize";
+import dbConfig from "../config/db.config.js";
+import pg from "pg";
 
-const Sequelize = require("sequelize");
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   host: dbConfig.HOST,
   dialect: dbConfig.dialect,
   operatorsAliases: 0,
-  //logging: console.log,
-  dialectModule: require('pg'),
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    }
-  },
+  logging: console.log,
+  dialectModule: pg,
+  dialectOptions: {},
   pool: {
     max: dbConfig.pool.max,
     min: dbConfig.pool.min,
     acquire: dbConfig.pool.acquire,
-    idle: dbConfig.pool.idle
-  }
+    idle: dbConfig.pool.idle,
+  },
 });
+
+if (process.env.NODE_ENV === "production") {
+  sequelize.dialectOptions = {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      }
+    }
+}
 
 const db = {};
 
 db.Sequelize = Sequelize;
+db.Op = Op;
 db.sequelize = sequelize;
 
-db.app_configs = require("./app_configs.model.js")(sequelize, Sequelize);
+import AppConfigs from "./app_configs.model.js";
+db.app_configs = AppConfigs(sequelize, Sequelize);
 
-db.users = require("./users.model.js")(sequelize, Sequelize);
-db.roles = require("./roles.model.js")(sequelize, Sequelize);
-db.usersDetails = require("./users_details.model.js")(sequelize, Sequelize);
-db.usersSettings = require("./users_settings.model.js")(sequelize, Sequelize);
-db.transactions = require("./transactions.model.js")(sequelize, Sequelize);
-db.aportes = require("./aportes.model.js")(sequelize, Sequelize);
-db.newPassword = require("./new_password.model.js")(sequelize, Sequelize);
-db.profits = require("./profits.model.js")(sequelize, Sequelize);
-db.refreshToken = require("./refresh_token.model.js")(sequelize, Sequelize);
+import Users from "./users.model.js";
+db.users = Users(sequelize, Sequelize);
+
+import Roles from "./roles.model.js";
+db.roles = Roles(sequelize, Sequelize);
+
+import UsersDetails from "./users_details.model.js";
+db.usersDetails = UsersDetails(sequelize, Sequelize);
+
+import UsersSettings from "./users_settings.model.js";
+db.usersSettings = UsersSettings(sequelize, Sequelize);
+
+import Transactions from "./transactions.model.js";
+db.transactions = Transactions(sequelize, Sequelize);
+
+import Aportes from "./aportes.model.js";
+db.aportes = Aportes(sequelize, Sequelize);
+
+import NewPassword from "./new_password.model.js";
+db.newPassword = NewPassword(sequelize, Sequelize);
+
+import Profits from "./profits.model.js";
+db.profits = Profits(sequelize, Sequelize);
+
+import RefreshToken from "./refresh_token.model.js";
+db.refreshToken = RefreshToken(sequelize, Sequelize);
 
 db.users.hasOne(db.usersDetails);
 db.usersDetails.belongsTo(db.users);
@@ -85,4 +109,4 @@ db.TRANSACTIONS_TYPES = ["saque", "rendimento", "novoAporte"];
 db.USER_TYPES = ["select", "invest"];
 db.APORTES_TYPES = ["security", "expert"];
 
-module.exports = db;
+export default db;

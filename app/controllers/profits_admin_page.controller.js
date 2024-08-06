@@ -1,17 +1,19 @@
-const db = require("../models");
+import db from "../models/index.js";
 const Users = db.users;
 const Aportes = db.aportes;
 const Profits = db.profits;
 const UsersDetails = db.usersDetails;
-const Op = db.Sequelize.Op;
+const op = db.Op;
 const formatter = new Intl.NumberFormat('pt-BR', {
     style: 'currency',
     currency: 'BRL',
 });
-const date_helpers = require('../helpers/date_helpers');
-const moment = require('moment');
+import date_helpers from '../helpers/date_helpers.js';
+import moment from 'moment';
 
-exports.returnProfitsData = (req, res) => {
+const profits_page = {};
+
+profits_page.returnProfitsData = (req, res) => {
     const rows = [];
 
     Profits.findAll({
@@ -40,9 +42,9 @@ exports.returnProfitsData = (req, res) => {
         profits.forEach((profit) => {
             try {
                 if (profit) {
-                    var endDate = profit.endDate != null ? date_helpers.parseDate(profit.endDate).format("DD/MM/YYYY") : "-";
+                    let endDate = profit.endDate != null ? date_helpers.parseDate(profit.endDate).format("DD/MM/YYYY") : "-";
 
-                    var row = {
+                    let row = {
                         id: profit.id,
                         startDate: date_helpers.parseDate(profit.startDate).format("DD/MM/YYYY"),
                         endDate: endDate,
@@ -50,7 +52,7 @@ exports.returnProfitsData = (req, res) => {
                         aporteId: profit.aporteId ? process.env.APORTE_PREFIX + profit.aporteId.padStart(5, "0") : "-",
                     };
 
-                    if (profit.aporte && profit.aporte.user) {
+                    if (profit.aporte?.user) {
                         row.user = profit.aporte.user.users_detail.firstName + " " + profit.aporte.user.users_detail.lastName;
                         row.userId = profit.aporte.user.id;
                     } else {
@@ -73,7 +75,7 @@ exports.returnProfitsData = (req, res) => {
 
 };
 
-exports.getProfitData = (req, res) => {
+profits_page.getProfitData = (req, res) => {
     Profits.findByPk(req.params.profitId).then((profit) => {
         res.status(200).send({ profit });
     }).catch(err => {
@@ -81,7 +83,7 @@ exports.getProfitData = (req, res) => {
     });
 };
 
-exports.updateProfit = (req, res) => {
+profits_page.updateProfit = (req, res) => {
     Profits.findOne({
         where: {
             id: req.body.profit.id
@@ -104,7 +106,7 @@ exports.updateProfit = (req, res) => {
     });
 };
 
-exports.newProfit = (req, res) => {
+profits_page.newProfit = (req, res) => {
     Profits.create({
         startDate: moment(req.body.profit.startDate),
         endDate: req.body.profit.endDate != undefined ? new Date(req.body.profit.endDate) : null,
@@ -131,7 +133,7 @@ exports.newProfit = (req, res) => {
         });
 };
 
-exports.getUserAportes = (req, res) => {
+profits_page.getUserAportes = (req, res) => {
     Aportes.findAll({
         where: {
             userId: req.params.userId
@@ -146,3 +148,5 @@ exports.getUserAportes = (req, res) => {
         res.status(500).send({ message: 'Erro ao buscar os aportes do usuário.' });
     });
 };
+
+export default profits_page;

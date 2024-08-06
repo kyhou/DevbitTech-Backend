@@ -1,21 +1,22 @@
-const db = require("../models");
+import db from "../models/index.js";
 const Aportes = db.aportes;
 const Transactions = db.transactions;
 const Profits = db.profits;
 const Users = db.users;
 const UsersDetails = db.usersDetails;
-const op = db.Sequelize.Op;
-const Enumerable = require('linq');
-const moment = require('moment');
-const pino = require('pino');
+const op = db.Op;
+
+import Enumerable from 'linq';
+import moment from 'moment';
+import pino from 'pino';
+import contract_helpers from '../helpers/contract_helpers.js';
 
 const logger = pino();
-const contract_helpers = require('../helpers/contract_helpers');
-
+const cron = {};
 /**
  * Processa os rendimentos de todos os aportes.
  */
-exports.processUsersProfits = () => {
+cron.processUsersProfits = () => {
     Aportes.findAll({
         where: {
             active: true,
@@ -131,7 +132,7 @@ exports.processUsersProfits = () => {
 /**
  * Processa os novos aportes dos rendimentos acima de 500 reais dos usuários.
  */
-exports.processNewAportes = () => {
+cron.processNewAportes = () => {
     Users.findAll({
         where: {
             active: true,
@@ -175,7 +176,7 @@ exports.processNewAportes = () => {
              * @returns {void}
              */
             function newAporte(aportes, template) {
-                var totalValue = 0;
+                let totalValue = 0;
 
                 aportes.forEach(aporte => {
                     aporte.transactions.forEach(aporteTransaction => {
@@ -268,3 +269,5 @@ exports.processNewAportes = () => {
         logger.error(err);
     });
 }
+
+export default cron_controller;

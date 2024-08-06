@@ -1,7 +1,9 @@
-module.exports = app => {
-    const { authJwt } = require("../middleware");
-    const userDashboard = require("../controllers/user_dashboard.controller");
-    var router = require("express").Router();
+import express from "express";
+import { authJwt } from "../middleware/index.js";
+import userDashboard from "../controllers/user_dashboard.controller.js";
+
+export default app => {
+    let router = express.Router();
 
     router.get(
         "/:userId",

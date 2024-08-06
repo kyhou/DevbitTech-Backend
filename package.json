@@ -7,6 +7,7 @@
   },
   "author": "Joel Vicente Filho <devbittech@gmail.com>",
   "license": "UNLICENSED",
+  "type": "module",
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.1",
     "argon2": "^0.30.3",
