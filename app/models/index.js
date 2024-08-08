@@ -8,12 +8,12 @@ const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
   operatorsAliases: 0,
   logging: console.log,
   dialectModule: pg,
-  // dialectOptions: {
-  //   ssl: {
-  //     require: true,
-  //     rejectUnauthorized: false,
-  //   }
-  // },
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    }
+  },
   pool: {
     max: dbConfig.pool.max,
     min: dbConfig.pool.min,
