@@ -4,13 +4,11 @@ import fs from 'fs';
 import path from 'path';
 const __dirname = import.meta.dirname;
 
-const BASE_DIR = path.join(__dirname, '..');
-
 export default async function RouteLoader(globPattern) {
   let router = Router();
   let files = [];
   try {
-    files = await glob(globPattern, { cwd: BASE_DIR });
+    files = await glob(globPattern, { cwd: __dirname });
   } catch (error) {
     console.error(error);
   }

@@ -28,7 +28,7 @@ app.use(pino);
 
 db.sequelize.sync();
 
-const routes = await RouteLoader('app/routes/**/*.js');
+const routes = await RouteLoader('./app/routes/**/*.js');
 app.use('/', routes);
 
 // set port, listen for requests
