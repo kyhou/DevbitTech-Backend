@@ -28,23 +28,13 @@ app.use(pino);
 
 db.sequelize.sync();
 
-// import glob from 'glob';
-// import path from 'path';
-
-// glob.sync('./routes/**/*.js').forEach(async (file) => {
-//   const module = await import(path.resolve(file));
-//   module.default(app);
-// });
-
 const routes = await RouteLoader('api/routes/**/*.js');
 app.use('/', routes);
 
-if (process.env.NODE_ENV === 'development') {
-  // set port, listen for requests
-  const PORT = process.env.PORT || 8088;
-  app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}.`);
-  });
-}
+// set port, listen for requests
+const PORT = process.env.PORT || 8088;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}.`);
+});
 
 export default app;
