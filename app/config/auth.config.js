@@ -2,7 +2,6 @@ import fs from 'fs';
 import path from 'path';
 
 const __dirname = import.meta.dirname;
-
 let secret;
 
 if (fs.existsSync(path.join(__dirname, 'hs256.key'))) {

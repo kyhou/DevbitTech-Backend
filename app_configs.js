@@ -1,5 +1,5 @@
 import pino from 'pino';
-import AppConfigs from "./controllers/app_configs.controller.js";
+import AppConfigs from "./app/controllers/app_configs.controller.js";
 
 /**
 * Set enviroment variables from the table app_configs on the database

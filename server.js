@@ -4,7 +4,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import pinoHttp from 'pino-http';
 import appConfigs from './app_configs.js';
-import db from './models/index.js';
+import db from './app/models/index.js';
 import RouteLoader from './router_loader.js';
 
 const pino = pinoHttp({
@@ -28,7 +28,7 @@ app.use(pino);
 
 db.sequelize.sync();
 
-const routes = await RouteLoader('api/routes/**/*.js');
+const routes = await RouteLoader('app/routes/**/*.js');
 app.use('/', routes);
 
 // set port, listen for requests

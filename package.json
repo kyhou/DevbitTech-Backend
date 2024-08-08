@@ -1,9 +1,9 @@
 {
   "name": "backend",
-  "main": "api/index.js",
+  "main": "server.js",
   "private": true,
   "scripts": {
-    "start": "node api/index.js",
+    "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Joel Vicente Filho <devbittech@gmail.com>",
