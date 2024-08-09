@@ -4,7 +4,7 @@ import aportes_page from "../controllers/aportes_admin_page.controller.js";
 
 
 export default function (router) {
-    router.get("/api/aportesAdminPage/",
+    router.get("/aportesAdminPage/",
         [
             authJwt.verifyToken,
             authJwt.isAdmin
@@ -13,7 +13,7 @@ export default function (router) {
     );
 
     router.post(
-        "/api/aportesAdminPage/updateAporte",
+        "/aportesAdminPage/updateAporte",
         [
             authJwt.verifyToken,
             authJwt.isAdmin
@@ -22,7 +22,7 @@ export default function (router) {
     );
 
     router.post(
-        "/api/aportesAdminPage/newAporte",
+        "/aportesAdminPage/newAporte",
         [
             authJwt.verifyToken,
             authJwt.isAdmin
@@ -31,7 +31,7 @@ export default function (router) {
     );
 
     router.post(
-        "/api/aportesAdminPage/generateContract",
+        "/aportesAdminPage/generateContract",
         [
             authJwt.verifyToken,
             authJwt.isAdmin,

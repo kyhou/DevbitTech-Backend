@@ -2,17 +2,17 @@ import { authJwt } from "../middleware/index.js";
 import withdraws_page from "../controllers/withdraws_admin_page.controller.js";
 
 export default function (router) {
-    router.get("/api/withdrawsAdminPage/",
+    router.get("/withdrawsAdminPage/",
         [authJwt.verifyToken, authJwt.isAdmin],
         withdraws_page.returnWithdraws
     );
 
-    router.post("/api/withdrawsAdminPage/toggleTransactionExecuted",
+    router.post("/withdrawsAdminPage/toggleTransactionExecuted",
         [authJwt.verifyToken, authJwt.isAdmin],
         withdraws_page.toggleTransactionExecuted
     );
 
-    router.post("/api/withdrawsAdminPage/toggleUserTransactionsExecuted",
+    router.post("/withdrawsAdminPage/toggleUserTransactionsExecuted",
         [authJwt.verifyToken, authJwt.isAdmin],
         withdraws_page.toggleUserTransactionsExecuted
     );

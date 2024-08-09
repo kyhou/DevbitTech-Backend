@@ -2,18 +2,18 @@ import { authJwt } from "../middleware/index.js";
 import profits_page from "../controllers/profits_admin_page.controller.js";
 
 export default function (router) {
-    router.get("/api/profitsAdminPage/",
+    router.get("/profitsAdminPage/",
         [authJwt.verifyToken, authJwt.isAdmin],
         profits_page.returnProfitsData
     );
 
-    router.get("/api/profitsAdminPage/:id",
+    router.get("/profitsAdminPage/:id",
         [authJwt.verifyToken, authJwt.isAdmin],
         profits_page.getProfitData
     );
 
     router.post(
-        "/api/profitsAdminPage/updateProfit",
+        "/profitsAdminPage/updateProfit",
         [
             authJwt.verifyToken,
             authJwt.isAdmin
@@ -22,7 +22,7 @@ export default function (router) {
     );
 
     router.post(
-        "/api/profitsAdminPage/newProfit",
+        "/profitsAdminPage/newProfit",
         [
             authJwt.verifyToken,
             authJwt.isAdmin
@@ -31,7 +31,7 @@ export default function (router) {
     );
 
     router.get(
-        "/api/profitsAdminPage/getUserAportes/:userId",
+        "/profitsAdminPage/getUserAportes/:userId",
         [
             authJwt.verifyToken,
             authJwt.isAdmin

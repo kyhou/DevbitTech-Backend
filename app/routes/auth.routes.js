@@ -11,7 +11,7 @@ export default function (router) {
     });
 
     router.post(
-        "/api/auth/signup",
+        "/auth/signup",
         [
             authJwt.verifyToken, 
             authJwt.isAdmin,
@@ -21,9 +21,9 @@ export default function (router) {
         authController.signup
     );
 
-    router.post("/api/auth/refreshtoken", authController.refreshToken);
-    router.post("/api/auth/signin", authController.signin);
-    router.post("/api/auth/newPassword", authController.newPassword);
+    router.post("/auth/refreshtoken", authController.refreshToken);
+    router.post("/auth/signin", authController.signin);
+    router.post("/auth/newPassword", authController.newPassword);
 
     return router;
 };

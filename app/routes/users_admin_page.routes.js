@@ -2,18 +2,18 @@ import { authJwt } from "../middleware/index.js";
 import users_page from "../controllers/users_admin_page.controller.js";
 
 export default function (router) {
-    router.get("/api/usersAdminPage/",
+    router.get("/usersAdminPage/",
         [authJwt.verifyToken, authJwt.isAdmin],
         users_page.returnUsersData
     );
 
-    router.get("/api/usersAdminPage/:userId",
+    router.get("/usersAdminPage/:userId",
         [authJwt.verifyToken, authJwt.isAdmin],
         users_page.getUserData
     );
     
     router.post(
-        "/api/usersAdminPage/updateUser",
+        "/usersAdminPage/updateUser",
         [
             authJwt.verifyToken, 
             authJwt.isAdmin
@@ -22,7 +22,7 @@ export default function (router) {
     );
     
     router.post(
-        "/api/usersAdminPage/toggleUserActive",
+        "/usersAdminPage/toggleUserActive",
         [
             
             authJwt.verifyToken, 

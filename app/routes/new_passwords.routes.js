@@ -2,7 +2,7 @@ import newPasswordsController from "../controllers/new_passwords.controller.js";
 
 export default function (router) {
     router.get(
-        "/api/new_passwords/findOne/:key",
+        "/new_passwords/findOne/:key",
         newPasswordsController.findOne
     );
 

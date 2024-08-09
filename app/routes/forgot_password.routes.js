@@ -2,7 +2,7 @@ import forgot_password from "../controllers/forgot_password.controller.js";
 
 export default function (router) {
     router.post(
-        "/api/forgot_password/send",
+        "/forgot_password/send",
         forgot_password.send
     );
 

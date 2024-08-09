@@ -2,22 +2,22 @@ import { authJwt } from "../middleware/index.js";
 import users from "../controllers/users.controller.js";
 
 export default function (router) {
-    router.get("/api/test/all", users.allAccess);
+    router.get("/test/all", users.allAccess);
 
     router.get(
-        "/api/test/user",
+        "/test/user",
         [authJwt.verifyToken],
         users.userBoard
     );
 
     router.get(
-        "/api/test/colab",
+        "/test/colab",
         [authJwt.verifyToken, authJwt.isColaborator],
         users.colaboratorBoard
     );
 
     router.get(
-        "/api/test/admin",
+        "/test/admin",
         [authJwt.verifyToken, authJwt.isAdmin],
         users.adminBoard
     );

@@ -2,12 +2,12 @@ import { authJwt } from "../middleware/index.js";
 import profits from "../controllers/profits.controller.js";
 
 export default function (router) {
-    router.get("/api/profits/",
+    router.get("/profits/",
         [authJwt.verifyToken],
         profits.findAll
     );
 
-    router.get("/api/profits/:userId",
+    router.get("/profits/:userId",
         [authJwt.verifyToken],
         profits.findAllUserProfits
     );

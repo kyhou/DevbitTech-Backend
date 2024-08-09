@@ -3,38 +3,38 @@ import userDashboard from "../controllers/user_dashboard.controller.js";
 
 export default function (router) {
     router.get(
-        "/api/user/:userId",
+        "/user/:userId",
         [authJwt.verifyToken],
         userDashboard.getAportes);
 
     router.get(
-        "/api/user/getAutoReinvest/:userId",
+        "/user/getAutoReinvest/:userId",
         [authJwt.verifyToken],
         userDashboard.getAutoReinvest);
 
     router.get(
-        "/api/user/getBalanceOfType/:userId/:aporteType",
+        "/user/getBalanceOfType/:userId/:aporteType",
         [authJwt.verifyToken],
         userDashboard.getBalanceOfType);
 
     router.put(
-        "/api/user/updateAutoReinvest/:userId",
+        "/user/updateAutoReinvest/:userId",
         [authJwt.verifyToken],
         userDashboard.updateAutoReinvest);
 
     router.post(
-        "/api/user/newTransaction/:userId",
+        "/user/newTransaction/:userId",
         [authJwt.verifyToken],
         userDashboard.newTransaction);
 
     router.get(
-        "/api/user/getUserProfits/:userId",
+        "/user/getUserProfits/:userId",
         [authJwt.verifyToken],
         userDashboard.getUserProfits
     );
 
     router.get(
-        "/api/user/getAportesInitialSum/:userId",
+        "/user/getAportesInitialSum/:userId",
         [authJwt.verifyToken],
         userDashboard.getAportesInitialSum
     );

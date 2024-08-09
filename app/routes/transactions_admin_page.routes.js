@@ -2,18 +2,18 @@ import { authJwt } from "../middleware/index.js";
 import transactions_page from "../controllers/transactions_admin_page.controller.js";
 
 export default function (router) {
-    router.get("/api/transactionsAdminPage/",
+    router.get("/transactionsAdminPage/",
         [authJwt.verifyToken, authJwt.isAdmin],
         transactions_page.returnTransactionsData
     );
 
-    router.get("/api/transactionsAdminPage/:transactionId",
+    router.get("/transactionsAdminPage/:transactionId",
         [authJwt.verifyToken, authJwt.isAdmin],
         transactions_page.getTransactionData
     );
 
     router.post(
-        "/api/transactionsAdminPage/updateTransaction",
+        "/transactionsAdminPage/updateTransaction",
         [
             authJwt.verifyToken, 
             authJwt.isAdmin
@@ -22,7 +22,7 @@ export default function (router) {
     );
 
     router.post(
-        "/api/transactionsAdminPage/newTransaction",
+        "/transactionsAdminPage/newTransaction",
         [
             authJwt.verifyToken, 
             authJwt.isAdmin
@@ -31,7 +31,7 @@ export default function (router) {
     );
     
     router.post(
-        "/api/transactionsAdminPage/toggleTransactionActive",
+        "/transactionsAdminPage/toggleTransactionActive",
         [
             
             authJwt.verifyToken, 
@@ -41,7 +41,7 @@ export default function (router) {
     );
 
     router.get(
-        "/api/transactionsAdminPage/getUserAportes/:userId",
+        "/transactionsAdminPage/getUserAportes/:userId",
         [
             authJwt.verifyToken,
             authJwt.isAdmin
